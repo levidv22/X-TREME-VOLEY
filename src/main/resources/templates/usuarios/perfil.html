@@ -89,7 +89,7 @@
                             <i class="bi bi-shield-check fs-4"></i>
                         </div>
                         <div class="overflow-hidden">
-                            <span class="text-muted small fw-semibold d-block text-truncate">ACTIVACIÓN (S/. 50)</span>
+                            <span class="text-muted small fw-semibold d-block text-truncate">ACTIVACIÓN (S/. 40)</span>
                             <h5 class="fw-bold mb-0 text-truncate" th:text="${usuario.rol.name() == 'ADMIN' or usuario.activoMes ? 'Activo' : 'Inactivo'}" th:classappend="${usuario.rol.name() == 'ADMIN' or usuario.activoMes ? 'text-success' : 'text-danger'}"></h5>
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                         <div class="col-12 col-lg-6">
                             <label class="form-label text-muted small fw-semibold">Link de Registro con Código</label>
                             <div class="input-group">
-                                <input type="text" id="inputLink" class="form-control bg-light text-muted" th:value="${'https://x-treme-production.up.railway.app/usuarios/registro?ref=' + usuario.codigoReferido}" readonly />
+                                <input type="text" id="inputLink" class="form-control bg-light text-muted" th:value="${'https://x-treme.up.railway.app/usuarios/registro?ref=' + usuario.codigoReferido}" readonly />
                                 <button class="btn btn-outline-secondary" type="button" onclick="copiarTexto('inputLink')">
                                     <i class="bi bi-clipboard"></i> <span class="d-none d-sm-inline">Copiar</span>
                                 </button>
