@@ -21,20 +21,22 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 465
-    username: levidiaz2209@gmail.com
-    password: taptlqozuyaivgdh
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
           auth: true
-          starttls:
-            enable: false
+          ssl:
+            enable: true
+            trust: smtp.gmail.com
           socketFactory:
             port: 465
             class: javax.net.ssl.SSLSocketFactory
             fallback: false
-          ssl:
-            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 server:
   #port: 8000
