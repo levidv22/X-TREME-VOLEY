@@ -121,7 +121,7 @@
                         <div class="col-12 col-lg-6">
                             <label class="form-label text-muted small fw-semibold">Link de Registro con Código</label>
                             <div class="input-group">
-                                <input type="text" id="inputLink" class="form-control bg-light text-muted" th:value="${'https://x-treme.up.railway.app/usuarios/registro?ref=' + usuario.codigoReferido}" readonly />
+                                <input type="text" id="inputLink" class="form-control bg-light text-muted" th:value="${'https://x-treme-production.railway.app/usuarios/registro?ref=' + usuario.codigoReferido}" readonly />
                                 <button class="btn btn-outline-secondary" type="button" onclick="copiarTexto('inputLink')">
                                     <i class="bi bi-clipboard"></i> <span class="d-none d-sm-inline">Copiar</span>
                                 </button>
