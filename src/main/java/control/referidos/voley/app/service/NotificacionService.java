@@ -1,9 +1,10 @@
 package control.referidos.voley.app.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -11,22 +12,14 @@ import java.io.UnsupportedEncodingException;
 @Service
 public class NotificacionService {
 
-    private final JavaMailSender mailSender;
+    private final Resend resend;
 
-    public NotificacionService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    public NotificacionService(@Value("${resend.api.key}") String apiKey) {
+        this.resend = new Resend(apiKey);
     }
 
-    public void enviarEmailRecuperacion(String to, String nombreUsuario, String codigo) throws MessagingException, UnsupportedEncodingException, UnsupportedEncodingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-        // Configuración de Remitente con Nombre Personalizado
-        helper.setFrom("levidiaz2209@gmail.com", "Corporación X-TREME");
-        helper.setTo(to);
-        helper.setSubject("Código de Verificación - Corporación X-TREME");
-
-        // Plantilla HTML con diseño Profesional (Azul Marino, Gris Claro y Blanco)
+    public void enviarEmailRecuperacion(String to, String nombreUsuario, String codigo) {
+        // Plantilla HTML con diseño Profesional
         String contenidoHtml = """
             <!DOCTYPE html>
             <html lang="es">
@@ -69,7 +62,21 @@ public class NotificacionService {
             </html>
             """.formatted(nombreUsuario != null ? nombreUsuario : "Estimado(a) Cliente", codigo);
 
-        helper.setText(contenidoHtml, true);
-        mailSender.send(message);
+        try {
+            CreateEmailOptions params = CreateEmailOptions.builder()
+                    // Si estás en pruebas con la API Key gratuita por defecto de Resend,
+                    // el "from" debe ser "onboarding@resend.dev"
+                    .from("Corporación X-TREME <onboarding@resend.dev>")
+                    .to(to)
+                    .subject("Código de Verificación - Corporación X-TREME")
+                    .html(contenidoHtml)
+                    .build();
+
+            CreateEmailResponse data = resend.emails().send(params);
+            System.out.println("Email enviado exitosamente a través de Resend API ID: " + data.getId());
+        } catch (ResendException e) {
+            System.err.println("Error al enviar email mediante Resend: " + e.getMessage());
+            throw new RuntimeException("No se pudo entregar el correo de verificación.", e);
+        }
     }
 }
