@@ -1,0 +1,5 @@
+package control.referidos.voley.infraestructure.entity;
+
+public enum RangoCarrera {
+    NINGUNO, LIDER, MAESTRO, BRONCE, PLATA, ORO, ZAFIRO, DIAMANTE, DIAMANTE_AZUL, DIAMANTE_NEGRO, DIAMANTE_IMPERIAL, STAR, GOLDEN_STAR, GOLD_STAR, DIAMOND_STAR, XTREME_STAR
+}

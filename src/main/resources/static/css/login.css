@@ -1,0 +1,83 @@
+:root {
+    --color-navy: #0A192F;
+    --color-navy-hover: #172A45;
+    --color-gray-light: #F8F9FA;
+    --color-gray-border: #E2E8F0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background-color: var(--color-gray-light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden; /* Evita scrolls horizontales indeseados en celulares */
+}
+
+.bg-navy {
+    background-color: var(--color-navy) !important;
+}
+
+.text-navy {
+    color: var(--color-navy) !important;
+}
+
+.bg-gray-light {
+    background-color: var(--color-gray-light) !important;
+}
+
+.text-gray-light {
+    color: #A0AEC0 !important;
+}
+
+.btn-navy {
+    background-color: var(--color-navy);
+    border-color: var(--color-navy);
+    transition: all 0.3s ease;
+}
+
+.btn-navy:hover {
+    background-color: var(--color-navy-hover);
+    border-color: var(--color-navy-hover);
+    transform: translateY(-1px);
+}
+
+.form-control:focus {
+    border-color: var(--color-navy);
+    box-shadow: 0 0 0 0.25rem rgba(10, 25, 47, 0.15);
+}
+
+.input-group-text {
+    border-color: var(--color-gray-border);
+}
+
+.card {
+    border-radius: 1rem;
+}
+
+/* Ajustes especiales para pantallas muy pequeñas (celulares compactos en vertical) */
+@media (max-width: 576px) {
+    body {
+        align-items: flex-start !important; /* Permite scroll natural si el teclado del celular abre el espacio */
+    }
+    .card {
+        border-radius: 0.75rem;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - Voley Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/perfil-dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/editar-perfil.css}">
+</head>
+<body class="bg-light">
+
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<div class="main-content">
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container-fluid p-3 p-md-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden animate-fade-in">
+
+                    <div class="card-header bg-navy text-white p-3 p-md-4 text-center position-relative">
+                        <h3 class="mb-1 fw-bold fs-4 fs-md-3"><i class="bi bi-person-gear me-2"></i>Editar Perfil</h3>
+                        <p class="text-gray-light mb-0 small">Actualiza tu información personal y mantén tu cuenta al día</p>
+                    </div>
+
+                    <div class="card-body p-3 p-md-5 bg-white">
+
+                        <form th:action="@{/usuarios/actualizar}" th:object="${usuario}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+
+                            <input type="hidden" th:field="*{id}" />
+                            <input type="hidden" th:field="*{password}" />
+                            <input type="hidden" th:field="*{rol}" />
+                            <input type="hidden" th:field="*{tipoRed}" />
+                            <input type="hidden" th:field="*{rangoActual}" />
+                            <input type="hidden" th:field="*{activoMes}" />
+                            <input type="hidden" th:field="*{fotoUrl}" />
+
+                            <!-- Sección de Avatar Responsiva -->
+                            <div class="text-center mb-4">
+                                <div class="position-relative d-inline-block avatar-container">
+                                    <img id="previewImg"
+                                         th:src="${usuario.fotoUrl != null && !usuario.fotoUrl.isEmpty() ? usuario.fotoUrl : '/img/default.jpg'}"
+                                         alt="Foto de perfil"
+                                         class="rounded-circle img-thumbnail shadow-sm avatar-preview" />
+                                    <label for="fileFoto" class="upload-badge shadow" title="Cambiar foto">
+                                        <i class="bi bi-camera-fill"></i>
+                                    </label>
+                                </div>
+                                <div class="input-file-wrapper mt-3">
+                                    <input type="file" id="fileFoto" name="fileFoto" class="form-control form-control-sm d-none" accept="image/*" />
+                                </div>
+                                <br>
+                                <div class="form-text text-muted small mt-2">Haz clic en la cámara o selecciona un archivo para cambiar tu foto.</div>
+                            </div>
+
+                            <!-- Campos del Formulario -->
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="nombre" class="form-label fw-semibold text-navy small text-uppercase">Nombre</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-gray-light border-end-0"><i class="bi bi-person text-navy"></i></span>
+                                        <input type="text" id="nombre" th:field="*{nombre}" class="form-control border-start-0 shadow-none" required />
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="apellido" class="form-label fw-semibold text-navy small text-uppercase">Apellido</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-gray-light border-end-0"><i class="bi bi-person-fill text-navy"></i></span>
+                                        <input type="text" id="apellido" th:field="*{apellido}" class="form-control border-start-0 shadow-none" required />
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="email" class="form-label fw-semibold text-navy small text-uppercase">Correo Electrónico</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-gray-light border-end-0"><i class="bi bi-envelope text-navy"></i></span>
+                                        <input type="email" id="email" th:field="*{email}" class="form-control border-start-0 shadow-none" required />
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="dni" class="form-label fw-semibold text-navy small text-uppercase">DNI</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-gray-light border-end-0"><i class="bi bi-card-heading text-navy"></i></span>
+                                        <input type="text" id="dni" th:field="*{dni}" maxlength="8" class="form-control border-start-0 shadow-none" required />
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="telefono" class="form-label fw-semibold text-navy small text-uppercase">Teléfono</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-gray-light border-end-0"><i class="bi bi-telephone text-navy"></i></span>
+                                        <input type="text" id="telefono" th:field="*{telefono}" class="form-control border-start-0 shadow-none" />
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="fechaNacimiento" class="form-label fw-semibold text-navy small text-uppercase">Fecha de Nacimiento</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-gray-light border-end-0"><i class="bi bi-calendar-event text-navy"></i></span>
+                                        <input type="date" id="fechaNacimiento" name="fechaNacimiento"
+                                               th:value="${usuario.fechaNacimiento != null ? #temporals.format(usuario.fechaNacimiento, 'yyyy-MM-dd') : ''}"
+                                               class="form-control border-start-0 shadow-none" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="departamentoSelect" class="form-label">Departamento</label>
+                                        <select class="form-select" id="departamentoSelect" th:field="*{departamento}" required>
+                                            <option value="">Seleccione Departamento</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4 mb-3">
+                                        <label for="provinciaSelect" class="form-label">Provincia</label>
+                                        <select class="form-select" id="provinciaSelect" th:field="*{provincia}" required disabled>
+                                            <option value="">Seleccione Provincia</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4 mb-3">
+                                        <label for="distritoSelect" class="form-label">Distrito</label>
+                                        <select class="form-select" id="distritoSelect" th:field="*{distrito}" required disabled>
+                                            <option value="">Seleccione Distrito</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="direccion" class="form-label fw-semibold text-navy small text-uppercase">Dirección</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-gray-light border-end-0"><i class="bi bi-geo-alt text-navy"></i></span>
+                                        <input type="text" id="direccion" th:field="*{direccion}" class="form-control border-start-0 shadow-none" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones de Acción Responsivos -->
+                            <div class="d-flex flex-column-reverse flex-sm-row justify-content-end gap-2 gap-md-3 mt-4 pt-3 border-top">
+                                <a th:href="@{/usuarios/perfil}" class="btn btn-outline-secondary px-4 py-2 rounded-pill fw-semibold shadow-sm text-center">
+                                    <i class="bi bi-x-lg me-1"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-navy px-4 py-2 rounded-pill fw-semibold text-white shadow-sm text-center">
+                                    <i class="bi bi-check-lg me-1"></i> Guardar Cambios
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/editar-perfil.js}"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', async () => {
+        // 1. Obtener los valores que ya están guardados en la BD desde Thymeleaf
+        const depGuardado = /*[[${usuario.departamento}]]*/ '';
+        const provGuardado = /*[[${usuario.provincia}]]*/ '';
+        const distGuardado = /*[[${usuario.distrito}]]*/ '';
+
+        const depSelect = document.getElementById('departamentoSelect');
+        const provSelect = document.getElementById('provinciaSelect');
+        const distSelect = document.getElementById('distritoSelect');
+
+        try {
+            // 2. Cargar los 3 archivos JSON en paralelo
+            const [resDep, resProv, resDist] = await Promise.all([
+                fetch('/json/departamentos.json'),
+                fetch('/json/provincias.json'),
+                fetch('/json/distritos.json')
+            ]);
+
+            const departamentos = await resDep.json();
+            const provinciasData = await resProv.json();
+            const distritosData = await resDist.json();
+
+            // 3. Poblar Departamentos
+            departamentos.forEach(dep => {
+                const opt = document.createElement('option');
+                opt.value = dep.nombre_ubigeo;
+                opt.dataset.id = dep.id_ubigeo;
+                opt.textContent = dep.nombre_ubigeo;
+                if (dep.nombre_ubigeo === depGuardado) {
+                    opt.selected = true;
+                }
+                depSelect.appendChild(opt);
+            });
+
+            // 4. Si hay Departamento guardado, poblar y seleccionar Provincias
+            if (depSelect.selectedIndex > 0) {
+                const selectedDepOpt = depSelect.options[depSelect.selectedIndex];
+                const depId = selectedDepOpt.dataset.id;
+
+                if (depId && provinciasData[depId]) {
+                    provSelect.innerHTML = '<option value="">Seleccione Provincia</option>';
+                    provinciasData[depId].forEach(prov => {
+                        const opt = document.createElement('option');
+                        opt.value = prov.nombre_ubigeo;
+                        opt.dataset.id = prov.id_ubigeo;
+                        opt.textContent = prov.nombre_ubigeo;
+                        if (prov.nombre_ubigeo === provGuardado) {
+                            opt.selected = true;
+                        }
+                        provSelect.appendChild(opt);
+                    });
+                    provSelect.disabled = false;
+                }
+            }
+
+            // 5. Si hay Provincia guardada, poblar y seleccionar Distritos
+            if (provSelect.selectedIndex > 0) {
+                const selectedProvOpt = provSelect.options[provSelect.selectedIndex];
+                const provId = selectedProvOpt.dataset.id;
+
+                if (provId && distritosData[provId]) {
+                    distSelect.innerHTML = '<option value="">Seleccione Distrito</option>';
+                    distritosData[provId].forEach(dist => {
+                        const opt = document.createElement('option');
+                        opt.value = dist.nombre_ubigeo;
+                        opt.textContent = dist.nombre_ubigeo;
+                        if (dist.nombre_ubigeo === distGuardado) {
+                            opt.selected = true;
+                        }
+                        distSelect.appendChild(opt);
+                    });
+                    distSelect.disabled = false;
+                }
+            }
+
+            // --- EVENT LISTENERS PARA EL CAMBIO MANUAL ---
+
+            // Al cambiar Departamento manualmente
+            depSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const depId = selectedOption.dataset.id;
+
+                provSelect.innerHTML = '<option value="">Seleccione Provincia</option>';
+                distSelect.innerHTML = '<option value="">Seleccione Distrito</option>';
+                distSelect.disabled = true;
+
+                if (depId && provinciasData[depId]) {
+                    provinciasData[depId].forEach(prov => {
+                        const opt = document.createElement('option');
+                        opt.value = prov.nombre_ubigeo;
+                        opt.dataset.id = prov.id_ubigeo;
+                        opt.textContent = prov.nombre_ubigeo;
+                        provSelect.appendChild(opt);
+                    });
+                    provSelect.disabled = false;
+                } else {
+                    provSelect.disabled = true;
+                }
+            });
+
+            // Al cambiar Provincia manualmente
+            provSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const provId = selectedOption.dataset.id;
+
+                distSelect.innerHTML = '<option value="">Seleccione Distrito</option>';
+
+                if (provId && distritosData[provId]) {
+                    distritosData[provId].forEach(dist => {
+                        const opt = document.createElement('option');
+                        opt.value = dist.nombre_ubigeo;
+                        opt.textContent = dist.nombre_ubigeo;
+                        distSelect.appendChild(opt);
+                    });
+                    distSelect.disabled = false;
+                } else {
+                    distSelect.disabled = true;
+                }
+            });
+
+        } catch (error) {
+            console.error("Error al cargar las ubicaciones:", error);
+        }
+    });
+</script>
+</body>
+</html>

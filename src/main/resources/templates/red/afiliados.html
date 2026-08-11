@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red de Afiliados - Voley Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/perfil-dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/afiliados.css}">
+</head>
+<body class="bg-light">
+
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<div class="main-content">
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container-fluid p-3 p-md-4">
+
+        <!-- Cabecera Responsiva -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+            <div>
+                <h2 class="fw-bold text-navy mb-1"><i class="bi bi-diagram-3-fill me-2 text-primary"></i>Red de Afiliados</h2>
+                <p class="text-muted small mb-0">Visualiza tu árbol genealógico de referidos nivel por nivel en tiempo real.</p>
+            </div>
+            <div>
+                <a th:href="@{/usuarios/perfil}" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al Perfil
+                </a>
+            </div>
+        </div>
+
+        <!-- Tarjeta Principal del Árbol -->
+        <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white tree-container">
+
+            <div th:if="${#lists.isEmpty(arbolRed.hijos)}" class="text-center py-5">
+                <div class="mb-3 text-muted opacity-50">
+                    <i class="bi bi-person-plus display-4"></i>
+                </div>
+                <h6 class="text-muted fw-semibold">Aún no cuentas con afiliados registrados en tu red directa.</h6>
+                <p class="text-muted small mb-0">Comparte tu enlace de invitación para comenzar a expandir tu equipo.</p>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(arbolRed.hijos)}">
+
+                <!-- NODO RAÍZ (Usuario Logueado) -->
+                <div class="d-flex align-items-center p-3 mb-3 bg-light rounded-3 border border-primary-subtle shadow-sm flex-wrap gap-2">
+                    <img th:src="${arbolRed.fotoUrl}" class="avatar-img me-2 me-md-3 shadow-sm flex-shrink-0" alt="Avatar">
+                    <div class="flex-grow-1 overflow-hidden">
+                        <h5 class="mb-0 fw-bold text-dark text-truncate" th:text="${arbolRed.nombreCompleto}"></h5>
+                        <small class="text-muted text-truncate d-block"><i class="bi bi-envelope me-1"></i><span th:text="${arbolRed.email}"></span> | <i class="bi bi-shield-check me-1"></i>Tú</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">Nivel Base</span>
+                    </div>
+                </div>
+
+                <!-- CONTENEDOR DE RAMAS (RECURSIVO) CON SOPORTE RESPONSIVO -->
+                <div class="tree-scroll-wrapper">
+                    <div class="ms-1 ms-md-3">
+                        <div th:replace="~{red/afiliados :: fragmento-nodo(hijos=${arbolRed.hijos}, sessionUser=${session.usuarioLogueado})}"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- FRAGMENTO RECURSIVO PARA RENDERIZAR EL ÁRBOL NIVEL POR NIVEL -->
+<div th:fragment="fragmento-nodo(hijos, sessionUser)">
+    <div th:each="hijo, iterStat : ${hijos}" class="tree-branch">
+        <div class="node-card p-3 mb-2">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+
+                <div class="d-flex align-items-center flex-grow-1 overflow-hidden">
+                    <!-- Botón Desplegable si tiene sub-hijos -->
+                    <div th:if="${!#lists.isEmpty(hijo.hijos)}" class="toggle-btn me-2 text-primary fw-bold fs-5 flex-shrink-0" onclick="toggleSubTree(this)" role="button">
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+                    <div th:if="${#lists.isEmpty(hijo.hijos)}" class="me-2 me-md-3 text-muted opacity-25 flex-shrink-0">
+                        <i class="bi bi-dot fs-4"></i>
+                    </div>
+
+                    <img th:src="${hijo.fotoUrl}" class="avatar-img me-2 me-md-3 shadow-sm flex-shrink-0" alt="Foto">
+                    <div class="overflow-hidden flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 180px;" th:text="${hijo.nombreCompleto}"></h6>
+                            <span class="badge badge-nivel rounded-pill px-2 py-1" th:text="${'Nivel ' + hijo.nivel}"></span>
+                        </div>
+                        <div class="small text-muted mt-1 text-truncate">
+                            <span><i class="bi bi-award me-1"></i>Rango: <strong class="text-navy" th:text="${hijo.rangoActual}"></strong></span>
+
+                        </div>
+                        <div class="small text-muted mt-1 text-truncate">
+                        <span><i class="bi bi-star-fill me-1 text-success"></i>Puntos: <strong class="text-success" th:text="${hijo.puntosTotales + ' pts'}">0 pts</strong></span>
+                        </div>
+                        </div>
+                </div>
+
+                <!-- Acciones / Botón exclusivo para ADMIN -->
+                <div class="d-flex align-items-center gap-2 ms-auto">
+                    <th:block th:if="${sessionUser != null and sessionUser.rol.name() == 'ADMIN'}">
+                        <button class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm text-nowrap"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                th:data-bs-target="${'#detallesAdmin_' + hijo.nivel + '_' + iterStat.index}"
+                                aria-expanded="false"
+                                th:aria-controls="${'detallesAdmin_' + hijo.nivel + '_' + iterStat.index}">
+                            <i class="bi bi-eye me-1"></i> Ver Datos
+                        </button>
+                    </th:block>
+                </div>
+
+            </div>
+
+            <!-- Bloque Oculto (Colapsable) con los datos privados para el ADMIN -->
+            <th:block th:if="${sessionUser != null and sessionUser.rol.name() == 'ADMIN'}">
+                <div class="collapse mt-3 pt-2 border-top" th:id="${'detallesAdmin_' + hijo.nivel + '_' + iterStat.index}">
+                    <div class="bg-light p-2 rounded-3 small text-secondary d-flex flex-wrap gap-2 gap-md-3 align-items-center">
+                        <div><i class="bi bi-envelope me-1 text-primary"></i>Email: <strong class="text-break" th:text="${hijo.email}"></strong></div>
+                        <div><i class="bi bi-card-heading me-1 text-primary"></i>DNI: <strong th:text="${hijo.dni}"></strong></div>
+                        <div><i class="bi bi-telephone me-1 text-primary"></i>Teléfono: <strong th:text="${hijo.telefono}"></strong></div>
+                    </div>
+                </div>
+            </th:block>
+
+        </div>
+
+        <!-- SUBCARPETAS / SUB-RAMAS -->
+        <div th:if="${!#lists.isEmpty(hijo.hijos)}" class="sub-tree ms-2 ms-md-4">
+            <div th:replace="~{red/afiliados :: fragmento-nodo(hijos=${hijo.hijos}, sessionUser=${sessionUser})}"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/afiliados.js}"></script>
+</body>
+</html>

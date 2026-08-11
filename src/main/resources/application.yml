@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: voley
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #url: jdbc:mysql://localhost:3306/voley?serverTimezone=America/Lima&useSSL=TRUE
+    url: ${MYSQLHOST}
+    #username: root
+    username: ${MYSQLUSER}
+    #password: raticate2024
+    password: ${MYSQLPASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  mail:
+    #host: smtp.gmail.com
+    host: ${MAIL_HOST}
+    #port: 587
+    port: ${MAIL_PORT}
+    #username: levidiaz2209@gmail.com
+    username: ${MAIL_USERNAME}
+    #password: tapt lqoz uyai vgdh
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  #port: 8000
+  port: ${PORT}
+
+logging:
+  level:
+    org.hibernate.sql: debug

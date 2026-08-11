@@ -1,0 +1,107 @@
+/* static/css/afiliados.css */
+
+.tree-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+    width: 100%;
+}
+
+/* Contenedor con scroll horizontal para pantallas móviles estrechas */
+.tree-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+/* Estructura de árbol con líneas conectoras profesionales */
+.node-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s ease-in-out;
+    position: relative;
+    min-width: 280px; /* Asegura que la tarjeta no se comprima demasiado */
+}
+
+.node-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    border-color: #cbd5e1;
+}
+
+.tree-branch {
+    position: relative;
+    padding-left: 24px;
+    margin-top: 12px;
+}
+
+.tree-branch::before {
+    content: "";
+    position: absolute;
+    top: 24px;
+    left: 0;
+    width: 18px;
+    height: 2px;
+    background-color: #cbd5e1;
+}
+
+.tree-branch::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background-color: #cbd5e1;
+}
+
+.tree-branch:last-child::after {
+    height: 24px; /* Corta la línea vertical en el último elemento hijo */
+}
+
+.avatar-img {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+}
+
+.badge-nivel {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.toggle-btn {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.toggle-btn.collapsed i {
+    transform: rotate(-90deg);
+}
+
+.sub-tree {
+    display: none; /* Oculto por defecto, se despliega al hacer clic */
+}
+
+.sub-tree.show {
+    display: block;
+}
+
+/* Ajustes responsivos adicionales para tablets y PCs */
+@media (min-width: 768px) {
+    .tree-branch {
+        padding-left: 35px;
+    }
+    .tree-branch::before {
+        width: 25px;
+    }
+    .avatar-img {
+        width: 48px;
+        height: 48px;
+    }
+}

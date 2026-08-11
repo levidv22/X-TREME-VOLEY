@@ -1,0 +1,21 @@
+/* static/css/resumen.css */
+
+.bg-navy {
+    background-color: #0A192F !important;
+}
+
+.page-link:focus {
+    box-shadow: none;
+}
+
+/* Ajustes responsivos para tablas y paginación en móviles */
+@media (max-width: 576px) {
+    .table th, .table td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
+
+    .card {
+        border-radius: 1rem !important;
+    }
+}
