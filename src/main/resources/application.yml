@@ -20,6 +20,7 @@ spring:
 
 resend:
   api:
+    #key: re_Scxq6QJA_6vtEsKWdvfZLfdUFju7c4wvr
     key: ${RESEND_API_KEY}
 
 server:
