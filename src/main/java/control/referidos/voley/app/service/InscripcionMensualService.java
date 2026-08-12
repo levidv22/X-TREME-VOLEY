@@ -3,12 +3,10 @@ package control.referidos.voley.app.service;
 import control.referidos.voley.app.repository.InscripcionMensualRepository;
 import control.referidos.voley.app.repository.RedAfiliadosRepository;
 import control.referidos.voley.app.repository.UsuarioRepository;
-import control.referidos.voley.infraestructure.entity.InscripcionMensual;
-import control.referidos.voley.infraestructure.entity.RedAfiliados;
-import control.referidos.voley.infraestructure.entity.Rol;
-import control.referidos.voley.infraestructure.entity.Usuario;
+import control.referidos.voley.infraestructure.entity.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
@@ -20,17 +18,20 @@ public class InscripcionMensualService {
     private final RedAfiliadosRepository redAfiliadosRepository;
     private final PuntosService puntosService;
     private final PagoBonoService pagoBonoService;
+    private final NotifiService notifiService;
 
     public InscripcionMensualService(InscripcionMensualRepository inscripcionMensualRepository,
                                      UsuarioRepository usuarioRepository,
                                      RedAfiliadosRepository redAfiliadosRepository,
                                      PuntosService puntosService,
-                                     PagoBonoService pagoBonoService) {
+                                     PagoBonoService pagoBonoService,
+                                     NotifiService notifiService) {
         this.inscripcionMensualRepository = inscripcionMensualRepository;
         this.usuarioRepository = usuarioRepository;
         this.redAfiliadosRepository = redAfiliadosRepository;
         this.puntosService = puntosService;
         this.pagoBonoService = pagoBonoService;
+        this.notifiService = notifiService;
     }
 
     public List<InscripcionMensual> listarTodas() {
@@ -91,45 +92,49 @@ public class InscripcionMensualService {
                         nueva.setMontoTotal(40.0);
                         nueva.setMontoPagado(0.0);
                         nueva.setActivo(false);
-                        return inscripcionMensualRepository.save(nueva); // Guardamos previamente para tener un ID válido
+                        return inscripcionMensualRepository.save(nueva);
                     });
 
-            // Si no tiene ID (por si acaso entra por orElseGet sin guardar), nos aseguramos de guardarlo
             if (inscripcion.getId() == null) {
                 inscripcion = inscripcionMensualRepository.save(inscripcion);
             }
 
-            if (inscripcion.isActivo()) {
+            // 1. Si la inscripción ya está activa o no le queda espacio, avanzamos al siguiente mes
+            double espacioDisponible = inscripcion.getMontoTotal() - inscripcion.getMontoPagado();
+            if (inscripcion.isActivo() || espacioDisponible <= 0) {
                 mesTarget = mesTarget.plusMonths(1);
                 continue;
             }
 
-            double espacioDisponible = inscripcion.getMontoTotal() - inscripcion.getMontoPagado();
             double montoAplicadoEnEsteCiclo;
 
+            // 2. Si el abono cubre o supera lo que falta para completar los S/. 40 de este mes
             if (montoRestante >= espacioDisponible) {
                 montoAplicadoEnEsteCiclo = espacioDisponible;
                 montoRestante -= espacioDisponible;
+
                 inscripcion.setMontoPagado(inscripcion.getMontoTotal());
                 inscripcion.setActivo(true);
                 inscripcion.setFechaPago(LocalDate.now());
                 inscripcionMensualRepository.save(inscripcion);
 
+                // Activar al usuario si el pago completado corresponde al mes en curso
                 if (periodoStr.equals(YearMonth.now().toString())) {
                     usuario.setActivoMes(true);
                     usuarioRepository.save(usuario);
                     propagarPuntosAscendentes(usuario);
                 }
 
-                mesTarget = mesTarget.plusMonths(1);
+                mesTarget = mesTarget.plusMonths(1); // Pasamos al siguiente mes si aún queda saldo sobrante
             } else {
+                // 3. Si el abono es un pago parcial que no llega a cubrir el total del mes
                 montoAplicadoEnEsteCiclo = montoRestante;
                 inscripcion.setMontoPagado(inscripcion.getMontoPagado() + montoRestante);
                 inscripcionMensualRepository.save(inscripcion);
-                montoRestante = 0;
+                montoRestante = 0; // Se consumió todo el dinero abonado
             }
 
-            // GENERAR LOS BONOS ASCENDENTES Y PASARLE LA INSCRIPCIÓN ACTUAL
+            // 4. Procesar bonificaciones proporcionales al monto efectivamente aplicado
             if (montoAplicadoEnEsteCiclo > 0) {
                 pagoBonoService.procesarBonosPatrocinio(usuario, montoAplicadoEnEsteCiclo, inscripcion);
             }
@@ -198,5 +203,57 @@ public class InscripcionMensualService {
             puntosService.decrementarPuntosYReevaluarRango(patrocinador, 1, periodoMes);
             actual = patrocinador;
         }
+    }
+
+    public void reportarPagoComprobante(Usuario usuario, double monto, String comprobanteUrl) {
+        String periodoStr = YearMonth.now().toString();
+
+        InscripcionMensual inscripcion = inscripcionMensualRepository.findByUsuarioAndPeriodoMes(usuario, periodoStr)
+                .orElseGet(() -> {
+                    InscripcionMensual nueva = new InscripcionMensual();
+                    nueva.setUsuario(usuario);
+                    nueva.setPeriodoMes(periodoStr);
+                    nueva.setMontoTotal(40.0);
+                    nueva.setMontoPagado(0.0);
+                    nueva.setActivo(false);
+                    return inscripcionMensualRepository.save(nueva);
+                });
+
+        inscripcion.setComprobanteUrl(comprobanteUrl);
+        inscripcion.setMontoReportado(monto);
+        inscripcion.setEstadoPago(EstadoPago.EN_REVISION);
+        inscripcion.setFechaSubidaComprobante(LocalDateTime.now());
+        inscripcionMensualRepository.save(inscripcion);
+
+        // Enviar notificación automática al ADMIN
+        notifiService.crearNotificacionAdmin(
+                "Nuevo Pago Registrado",
+                usuario.getNombre() + " " + usuario.getApellido() + " ha subido un comprobante por S/. " + monto,
+                "/inscripciones/cliente/" + usuario.getId()
+        );
+    }
+
+    // NUEVO: Aprobar Pago desde la vista del ADMIN
+    public void aprobarPagoComprobante(Long inscripcionId) {
+        InscripcionMensual inscripcion = inscripcionMensualRepository.findById(inscripcionId)
+                .orElseThrow(() -> new RuntimeException("Inscripción no encontrada"));
+
+        if (inscripcion.getMontoReportado() != null && inscripcion.getMontoReportado() > 0) {
+            double montoAprobar = inscripcion.getMontoReportado();
+            inscripcion.setEstadoPago(EstadoPago.APROBADO);
+            inscripcionMensualRepository.save(inscripcion); // 1. Guardado manual
+
+            // 2. registrarAbonoParcial buscará nuevamente o creará la inscripción por periodo
+            registrarAbonoParcial(inscripcion.getUsuario().getId(), montoAprobar);
+        }
+    }
+
+    // NUEVO: Rechazar Pago
+    public void rechazarPagoComprobante(Long inscripcionId) {
+        InscripcionMensual inscripcion = inscripcionMensualRepository.findById(inscripcionId)
+                .orElseThrow(() -> new RuntimeException("Inscripción no encontrada"));
+
+        inscripcion.setEstadoPago(EstadoPago.RECHAZADO);
+        inscripcionMensualRepository.save(inscripcion);
     }
 }

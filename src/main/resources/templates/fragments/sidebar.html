@@ -71,7 +71,7 @@
             </div>
         </li>
 
-        <li class="nav-item" th:if="${session.usuarioLogueado != null and session.usuarioLogueado.rol.name() == 'ADMIN'}">
+        <li class="nav-item">
             <a th:href="@{/inscripciones}" class="nav-link text-white-50 d-flex align-items-center gap-3 py-2 px-3 rounded-3 sidebar-link">
                 <i class="bi bi-calendar-check fs-5"></i> Inscripción
             </a>

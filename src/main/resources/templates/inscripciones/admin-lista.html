@@ -48,7 +48,6 @@
                     <thead class="table-light small text-uppercase text-muted">
                     <tr>
                         <th class="py-3">Cliente</th>
-                        <th class="py-3">Correo</th>
                         <th class="py-3">DNI</th>
                         <th class="py-3">Teléfono</th>
                         <th class="text-center py-3">Acción</th>
@@ -62,12 +61,11 @@
                                 <span class="fw-semibold text-dark nombre-cliente text-truncate" style="max-width: 180px;" th:text="${u.nombre + ' ' + u.apellido}"></span>
                             </div>
                         </td>
-                        <td class="py-3 text-truncate" style="max-width: 200px;"><span class="text-muted" th:text="${u.email}"></span></td>
                         <td class="py-3"><span class="dni-cliente text-secondary fw-medium" th:text="${u.dni != null ? u.dni : 'N/D'}"></span></td>
                         <td class="py-3"><span class="telefono-cliente text-secondary fw-medium" th:text="${u.telefono != null ? u.telefono : 'N/D'}"></span></td>
                         <td class="text-center py-3">
                             <a th:href="@{'/inscripciones/cliente/' + ${u.id}}" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm text-nowrap">
-                                <i class="bi bi-eye me-1"></i> Pagos
+                                <i class="bi bi-eye me-1"></i> Ver y Realizar Pagos
                             </a>
                         </td>
                     </tr>

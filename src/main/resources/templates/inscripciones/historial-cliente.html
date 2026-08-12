@@ -40,6 +40,71 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
+        <!-- BANNER DE COMPROBANTE PENDIENTE / EN REVISIÓN (Elegante y fuera de la tabla) -->
+        <div th:each="ins : ${inscripciones}" th:if="${ins.comprobanteUrl != null and ins.estadoPago?.name() == 'EN_REVISION'}">
+            <div class="card border-warning border-0 border-start border-4 shadow-sm rounded-4 p-3 p-md-4 bg-white mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-warning-subtle text-warning p-3 rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-receipt-cutoff fs-3"></i>
+                        </div>
+                        <div>
+                            <span class="badge bg-warning text-dark rounded-pill px-2 py-1 mb-1 small">Comprobante por Verificar</span>
+                            <h5 class="fw-bold text-navy mb-0">El cliente ha enviado un Voucher de Pago</h5>
+                            <p class="text-muted small mb-0">
+                                Periodo: <strong th:text="${ins.periodoMes}"></strong> | Monto Reportado: <strong class="text-success" th:text="${'S/. ' + ins.montoReportado}"></strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción sobre el Voucher -->
+                    <div class="d-flex align-items-center gap-2 flex-wrap w-100 w-md-auto justify-content-end">
+                        <!-- Botón Abrir Modal Voucher -->
+                        <button class="btn btn-outline-info rounded-pill px-3 shadow-sm text-nowrap"
+                                data-bs-toggle="modal"
+                                th:data-bs-target="|#modalBannerComp${ins.id}|">
+                            <i class="bi bi-eye-fill me-1"></i> Ver Voucher
+                        </button>
+
+                        <form th:action="@{/inscripciones/admin/rechazar-comprobante}" method="post" class="d-inline">
+                            <input type="hidden" name="inscripcionId" th:value="${ins.id}"/>
+                            <input type="hidden" name="usuarioId" th:value="${cliente.id}"/>
+                            <button type="submit" class="btn btn-outline-danger rounded-pill px-3 shadow-sm text-nowrap" onclick="return confirm('¿Deseas rechazar este comprobante?');">
+                                <i class="bi bi-x-circle me-1"></i> Rechazar
+                            </button>
+                        </form>
+
+                        <form th:action="@{/inscripciones/admin/aprobar-comprobante}" method="post" class="d-inline">
+                            <input type="hidden" name="inscripcionId" th:value="${ins.id}"/>
+                            <input type="hidden" name="usuarioId" th:value="${cliente.id}"/>
+                            <button type="submit" class="btn btn-success rounded-pill px-3 shadow-sm text-nowrap">
+                                <i class="bi bi-check-circle me-1"></i> Aprobar Pago
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Visualización de Voucher -->
+            <div class="modal fade" th:id="|modalBannerComp${ins.id}|" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-4">
+                        <div class="modal-header border-bottom-0 pb-0">
+                            <h5 class="modal-title fw-bold text-navy"><i class="bi bi-image me-2 text-primary"></i>Voucher de Pago</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center p-4">
+                            <img th:src="${ins.comprobanteUrl}" class="img-fluid rounded-3 border shadow-sm max-h-400" alt="Comprobante" />
+                        </div>
+                        <div class="modal-footer border-top-0 pt-0 d-flex justify-content-between">
+                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                            <span class="fw-bold text-success" th:text="${'Monto: S/. ' + ins.montoReportado}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Tarjeta de Acciones de Cobro para este cliente -->
         <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white mb-4">
             <h5 class="fw-bold mb-3 text-secondary"><i class="bi bi-plus-circle-fill me-2"></i>Registrar Nuevo Pago o Abono</h5>
@@ -69,7 +134,7 @@
             </div>
         </div>
 
-        <!-- Listado de Historial de Inscripciones de este Cliente -->
+        <!-- Listado de Historial de Inscripciones de este Cliente (Tabla Limpia) -->
         <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white">
             <h5 class="fw-bold mb-3 text-secondary"><i class="bi bi-journal-check me-2"></i>Registros de Inscripción</h5>
             <div class="table-responsive">
@@ -88,26 +153,37 @@
                         <td colspan="5" class="text-center text-muted py-4">Este cliente aún no registra pagos ni abonos.</td>
                     </tr>
                     <tr th:each="ins : ${inscripciones}">
-                        <td class="py-3"><span class="badge bg-light text-dark border px-2 py-1" th:text="${ins.periodoMes}"></span></td>
+                        <td class="py-3">
+                            <span class="badge bg-light text-dark border px-2 py-1" th:text="${ins.periodoMes}"></span>
+                        </td>
+
+                        <!-- Barra de Progreso y Montos -->
                         <td class="py-3" style="min-width: 150px;">
                             <div class="fw-bold text-dark small" th:text="${'S/. ' + ins.montoPagado + ' / S/. ' + ins.montoTotal}"></div>
                             <div class="progress mt-1 rounded-pill" style="height: 6px;">
                                 <div class="progress-bar bg-success" role="progressbar"
-                                     th:style="${'width: ' + (ins.montoPagado * 100 / ins.montoTotal) + '%'}"
+                                     th:style="|width: ${ins.montoTotal > 0 ? (ins.montoPagado * 100 / ins.montoTotal) : 0}%;|"
                                      th:aria-valuenow="${ins.montoPagado}" aria-valuemin="0" aria-valuemax="40"></div>
                             </div>
                         </td>
-                        <td class="py-3 text-muted small" th:text="${ins.fechaPago != null ? ins.fechaPago : 'Pendiente / En proceso'}"></td>
+
+                        <td class="py-3 text-muted small" th:text="${ins.fechaPago != null ? ins.fechaPago : 'Pendiente'}"></td>
+
+                        <!-- Estado del Pago (Insignia Simplificada) -->
                         <td class="text-center py-3">
                             <span class="badge px-3 py-2 rounded-pill text-nowrap"
-                                  th:text="${ins.activo ? 'COMPLETADO' : 'EN PROCESO'}"
-                                  th:classappend="${ins.activo ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'}"></span>
+                                  th:text="${ins.estadoPago}"
+                                  th:classappend="${ins.estadoPago?.name() == 'APROBADO' ? 'bg-success-subtle text-success' : (ins.estadoPago?.name() == 'EN_REVISION' ? 'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary')}">
+                            </span>
                         </td>
+
+                        <!-- Botón de Eliminar -->
                         <td class="text-center py-3">
                             <form th:action="@{/inscripciones/admin/eliminar}" method="post" class="d-inline">
                                 <input type="hidden" name="id" th:value="${ins.id}"/>
                                 <input type="hidden" name="usuarioId" th:value="${cliente.id}"/>
-                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm text-nowrap" onclick="return confirm('¿Estás seguro de eliminar este registro de pago?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm text-nowrap"
+                                        onclick="return confirm('¿Estás seguro de eliminar este registro?');">
                                     <i class="bi bi-trash me-1"></i> Eliminar
                                 </button>
                             </form>

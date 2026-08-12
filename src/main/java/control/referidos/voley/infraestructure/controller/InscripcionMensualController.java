@@ -9,12 +9,15 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/inscripciones")
@@ -40,7 +43,10 @@ public class InscripcionMensualController {
             model.addAttribute("periodoActual", YearMonth.now().toString());
             return "inscripciones/admin-lista";
         } else {
-            model.addAttribute("inscripciones", inscripcionMensualService.findByUsuario(usuarioLogueado));
+            // Obtenemos las inscripciones del cliente logueado
+            List<InscripcionMensual> inscripciones = inscripcionMensualService.findByUsuario(usuarioLogueado);
+
+            model.addAttribute("misInscripciones", inscripciones);
             model.addAttribute("usuario", usuarioLogueado);
             return "inscripciones/lista";
         }
@@ -128,6 +134,74 @@ public class InscripcionMensualController {
         try {
             inscripcionMensualService.eliminarInscripcion(id);
             redirectAttributes.addFlashAttribute("exito", "Registro de pago eliminado correctamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/inscripciones/cliente/" + usuarioId;
+    }
+
+    @PostMapping("/cliente/subir-comprobante")
+    public String subirComprobante(@RequestParam double monto,
+                                   @RequestParam("comprobante") MultipartFile archivo,
+                                   HttpSession session,
+                                   RedirectAttributes redirectAttributes) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null) {
+            return "redirect:/usuarios/login";
+        }
+
+        if (archivo.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Por favor seleccione una imagen de comprobante.");
+            return "redirect:/inscripciones";
+        }
+
+        try {
+            // Lógica simple de guardado en /uploads/comprobantes
+            String nombreArchivo = System.currentTimeMillis() + "_" + archivo.getOriginalFilename();
+            Path ruta = Paths.get("uploads/comprobantes/" + nombreArchivo);
+            Files.createDirectories(ruta.getParent());
+            Files.write(ruta, archivo.getBytes());
+
+            inscripcionMensualService.reportarPagoComprobante(usuarioLogueado, monto, "/uploads/comprobantes/" + nombreArchivo);
+            redirectAttributes.addFlashAttribute("exito", "Comprobante subido con éxito. Está en revisión por el Administrador.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al subir comprobante: " + e.getMessage());
+        }
+        return "redirect:/inscripciones";
+    }
+
+    @PostMapping("/admin/aprobar-comprobante")
+    public String aprobarComprobante(@RequestParam Long inscripcionId,
+                                     @RequestParam Long usuarioId,
+                                     HttpSession session,
+                                     RedirectAttributes redirectAttributes) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null || usuarioLogueado.getRol() != Rol.ADMIN) {
+            return "redirect:/usuarios/login";
+        }
+
+        try {
+            inscripcionMensualService.aprobarPagoComprobante(inscripcionId);
+            redirectAttributes.addFlashAttribute("exito", "Pago verificado y aprobado correctamente.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/inscripciones/cliente/" + usuarioId;
+    }
+
+    @PostMapping("/admin/rechazar-comprobante")
+    public String rechazarComprobante(@RequestParam Long inscripcionId,
+                                      @RequestParam Long usuarioId,
+                                      HttpSession session,
+                                      RedirectAttributes redirectAttributes) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null || usuarioLogueado.getRol() != Rol.ADMIN) {
+            return "redirect:/usuarios/login";
+        }
+
+        try {
+            inscripcionMensualService.rechazarPagoComprobante(inscripcionId);
+            redirectAttributes.addFlashAttribute("exito", "El comprobante fue rechazado.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }

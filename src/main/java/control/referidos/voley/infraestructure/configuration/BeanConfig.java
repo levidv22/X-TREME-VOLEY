@@ -56,7 +56,12 @@ public class BeanConfig {
     }
 
     @Bean
-    public InscripcionMensualService inscripcionMensualService(InscripcionMensualRepository inscripcionMensualRepository, UsuarioRepository usuarioRepository, RedAfiliadosRepository redAfiliadosRepository, PuntosService puntosService, PagoBonoService pagoBonoService) {
-        return new InscripcionMensualService(inscripcionMensualRepository, usuarioRepository, redAfiliadosRepository, puntosService, pagoBonoService);
+    public InscripcionMensualService inscripcionMensualService(InscripcionMensualRepository inscripcionMensualRepository, UsuarioRepository usuarioRepository, RedAfiliadosRepository redAfiliadosRepository, PuntosService puntosService, PagoBonoService pagoBonoService, NotifiService notifiService) {
+        return new InscripcionMensualService(inscripcionMensualRepository, usuarioRepository, redAfiliadosRepository, puntosService, pagoBonoService, notifiService);
+    }
+
+    @Bean
+    public NotifiService notifiService(NotifiRepository notificacionRepository) {
+        return new NotifiService(notificacionRepository);
     }
 }

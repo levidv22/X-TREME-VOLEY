@@ -3,6 +3,7 @@ package control.referidos.voley.infraestructure.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "inscripciones_mensuales")
@@ -25,6 +26,19 @@ public class InscripcionMensual {
     private String periodoMes;
 
     private boolean activo;
+
+    @Column(name = "comprobante_url")
+    private String comprobanteUrl;
+
+    @Column(name = "monto_reportado")
+    private Double montoReportado; // Monto enviado por el usuario
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_pago")
+    private EstadoPago estadoPago = EstadoPago.PENDIENTE_PAGO;
+
+    @Column(name = "fecha_subida_comprobante")
+    private LocalDateTime fechaSubidaComprobante;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
