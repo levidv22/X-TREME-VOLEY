@@ -5,52 +5,53 @@
     <title>Header</title>
 </head>
 <body>
-<header th:fragment="header" class="navbar navbar-expand navbar-light bg-white px-3 px-md-4 py-2 shadow-sm custom-header">
-    <div class="container-fluid px-0">
+<header th:fragment="header" class="navbar navbar-expand navbar-light bg-white px-2 px-sm-3 px-md-4 py-2 shadow-sm custom-header w-100">
+    <div class="container-fluid px-0 d-flex align-items-center justify-content-between">
+
         <!-- Lado Izquierdo: Hamburguesa + Logo + Rango -->
-        <div class="d-flex align-items-center gap-2 gap-md-3">
-            <button class="btn btn-light d-lg-none border-0 p-0 shadow-none text-navy" type="button" id="sidebarToggle" aria-label="Abrir Menú">
-                <i class="bi bi-list fs-4"></i>
+        <div class="d-flex align-items-center gap-1 gap-sm-2 gap-md-3">
+            <button class="btn btn-light d-lg-none border-0 p-0 me-1 me-sm-2 shadow-none text-navy d-flex align-items-center justify-content-center" type="button" id="sidebarToggle" aria-label="Abrir Menú">
+                <i class="bi bi-list fs-2"></i>
             </button>
 
-            <a class="navbar-brand d-flex align-items-center me-2 me-md-3 text-decoration-none" th:href="@{/usuarios/perfil}">
-                <img th:src="@{/img/logo.png}" alt="Logo X-TREME" height="80" class="d-inline-block align-text-top object-fit-contain transition-transform hover-scale" />
+            <a class="navbar-brand d-flex align-items-center me-1 me-md-3 p-0 text-decoration-none" th:href="@{/usuarios/perfil}">
+                <img th:src="@{/img/logo.png}" alt="Logo X-TREME" class="header-logo object-fit-contain transition-transform hover-scale" />
             </a>
 
-            <div class="vr d-none d-sm-block my-auto text-secondary opacity-25" style="height: 24px;"></div>
+            <div class="vr d-none d-md-block my-auto text-secondary opacity-25" style="height: 24px;"></div>
 
-            <div class="d-flex align-items-center gap-2 ms-sm-1">
+            <div class="d-flex align-items-center gap-1 ms-sm-1">
                 <span class="text-muted small fw-semibold text-uppercase tracking-wider d-none d-md-inline">Rango:</span>
-                <span class="badge bg-navy px-3 py-2 rounded-pill fw-bold" th:text="${session.usuarioLogueado.rangoActual}">RANGO</span>
+                <span class="badge bg-navy px-2 px-sm-3 py-1 py-sm-2 rounded-pill fw-bold header-badge" th:text="${session.usuarioLogueado.rangoActual}">RANGO</span>
             </div>
         </div>
 
         <!-- Lado Derecho: Campanita (Solo Admin) + Menú de Usuario -->
-        <div class="d-flex align-items-center gap-1">
+        <div class="d-flex align-items-center gap-0 gap-sm-1">
 
             <!-- Campanita de Notificaciones -->
-            <div class="position-relative me-2" th:if="${session.usuarioLogueado != null && session.usuarioLogueado.rol.name() == 'ADMIN'}">
-                <a th:href="@{/notificaciones}" class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center shadow-none border-0 position-relative" style="width: 42px; height: 42px;">
+            <div class="position-relative me-0 me-sm-1" th:if="${session.usuarioLogueado != null && session.usuarioLogueado.rol.name() == 'ADMIN'}">
+                <a th:href="@{/notificaciones}" class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center shadow-none border-0 position-relative header-btn-bell">
                     <i class="bi bi-bell-fill fs-5 text-navy"></i>
-                    <!-- Cambio aquí: Usamos la variable del ModelAttribute -->
                     <span th:if="${conteoNotificacionesNoLeidas > 0}"
                           class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          style="font-size: 0.65rem;"
                           th:text="${conteoNotificacionesNoLeidas}">
-            0
-        </span>
+                        0
+                    </span>
                 </a>
             </div>
 
             <!-- Menú Dropdown del Usuario -->
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2 border-0 bg-transparent shadow-none" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-1 gap-sm-2 border-0 bg-transparent shadow-none p-1" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="text-end d-none d-sm-block">
                         <span class="d-block fw-bold text-navy text-truncate" style="max-width: 150px;" th:text="${session.usuarioLogueado.nombre + ' ' + session.usuarioLogueado.apellido}">Nombre Apellido</span>
                         <span class="d-block text-muted small text-truncate" style="max-width: 150px;" th:text="${session.usuarioLogueado.email}">correo@ejemplo.com</span>
                     </div>
                     <img th:src="${session.usuarioLogueado.fotoUrl != null && !session.usuarioLogueado.fotoUrl.isEmpty() ? session.usuarioLogueado.fotoUrl : '/img/default.jpg'}"
                          alt="Avatar"
-                         class="rounded-circle border" width="40" height="40" style="object-fit: cover;" />
+                         class="rounded-circle border flex-shrink-0" width="38" height="38" style="object-fit: cover;" />
                 </button>
                 <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-3 rounded-4 mt-2" aria-labelledby="userMenuDropdown" style="min-width: 260px; max-width: 90vw;">
                     <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
@@ -74,6 +75,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </header>
 </body>
