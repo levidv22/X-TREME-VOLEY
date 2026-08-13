@@ -1,6 +1,7 @@
 package control.referidos.voley.infraestructure.controller;
 
 import control.referidos.voley.app.service.InscripcionMensualService;
+import control.referidos.voley.app.service.PagoBonoService;
 import control.referidos.voley.app.service.UsuarioService;
 import control.referidos.voley.infraestructure.entity.InscripcionMensual;
 import control.referidos.voley.infraestructure.entity.Rol;
@@ -25,10 +26,14 @@ public class InscripcionMensualController {
 
     private final InscripcionMensualService inscripcionMensualService;
     private final UsuarioService usuarioService;
+    private final PagoBonoService pagoBonoService;
 
-    public InscripcionMensualController(InscripcionMensualService inscripcionMensualService, UsuarioService usuarioService) {
+    public InscripcionMensualController(InscripcionMensualService inscripcionMensualService,
+                                        UsuarioService usuarioService,
+                                        PagoBonoService pagoBonoService) {
         this.inscripcionMensualService = inscripcionMensualService;
         this.usuarioService = usuarioService;
+        this.pagoBonoService = pagoBonoService;
     }
 
     @GetMapping
@@ -43,14 +48,37 @@ public class InscripcionMensualController {
             model.addAttribute("periodoActual", YearMonth.now().toString());
             return "inscripciones/admin-lista";
         } else {
-            // Obtenemos las inscripciones del cliente logueado
             List<InscripcionMensual> inscripciones = inscripcionMensualService.findByUsuario(usuarioLogueado);
+
+            // Obtenemos el saldo actual disponible del cliente
+            double saldoBonos = pagoBonoService.obtenerSaldoDisponible(usuarioLogueado);
 
             model.addAttribute("misInscripciones", inscripciones);
             model.addAttribute("usuario", usuarioLogueado);
+            model.addAttribute("saldoBonos", saldoBonos); // Enviamos el saldo a la vista
             return "inscripciones/lista";
         }
     }
+
+    @PostMapping("/pagar-bono")
+    public String pagarConBono(@RequestParam("monto") double monto,
+                               HttpSession session,
+                               RedirectAttributes redirectAttributes) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null) {
+            return "redirect:/usuarios/login";
+        }
+
+        try {
+            inscripcionMensualService.pagarConBono(usuarioLogueado.getId(), monto);
+            redirectAttributes.addFlashAttribute("exito", "¡Pago con saldo de bono realizado exitosamente!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/inscripciones";
+    }
+
 
     @GetMapping("/cliente/{id}")
     public String historialCliente(@PathVariable Long id, HttpSession session, Model model) {

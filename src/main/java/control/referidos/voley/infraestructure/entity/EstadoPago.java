@@ -4,5 +4,7 @@ public enum EstadoPago {
     PENDIENTE_PAGO,
     EN_REVISION,
     APROBADO,
-    RECHAZADO
+    RECHAZADO,
+    PAGO_BONO,
+    PAGO_ADMIN
 }

@@ -91,12 +91,35 @@ public class PagoBonoService {
         }
         // Niveles 1 al 5 (5%, 2%, 1%, 1%, 1%) -> Requieren mínimo 50
         else {
-            return pagado >= 50.0;
+            return pagado >= 40.0;
         }
     }
 
     @Transactional
     public void eliminarBonosPorInscripcion(Long inscripcionId) {
         pagoBonoRepository.deleteByInscripcionMensualId(inscripcionId);
+    }
+
+    // Calculamos el saldo disponible de bonos del usuario
+    public double obtenerSaldoDisponible(Usuario usuario) {
+        List<PagoBono> lista = pagoBonoRepository.findByUsuario(usuario);
+
+        // Sumamos bonos ganados y restamos los consumidos (monto negativo o tipo "Uso de Bono")
+        return lista.stream()
+                .mapToDouble(PagoBono::getMonto)
+                .sum();
+    }
+
+    // Registra la deducción del saldo de bonos del usuario
+    public void registrarUsoDeBono(Usuario usuario, double montoUtilizado, InscripcionMensual inscripcion) {
+        PagoBono consumoBono = new PagoBono();
+        consumoBono.setMonto(-montoUtilizado); // Se guarda en negativo para reducir el saldo acumulado acumulado
+        consumoBono.setFechaPago(LocalDate.now());
+        consumoBono.setTipoBono("Pago de Inscripción con Bono");
+        consumoBono.setMetodoPago("Saldo Bono");
+        consumoBono.setUsuario(usuario);
+        consumoBono.setInscripcionMensual(inscripcion);
+
+        pagoBonoRepository.save(consumoBono);
     }
 }

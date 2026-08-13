@@ -4,6 +4,7 @@ import control.referidos.voley.app.repository.InscripcionMensualRepository;
 import control.referidos.voley.app.repository.RedAfiliadosRepository;
 import control.referidos.voley.app.repository.UsuarioRepository;
 import control.referidos.voley.infraestructure.entity.*;
+import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -108,12 +109,16 @@ public class InscripcionMensualService {
 
             double montoAplicadoEnEsteCiclo;
 
+            // ASIGNAMOS SIEMPRE EL ESTADO PAGO_ADMIN CUANDO EL ADMIN REGISTRA O ABONA
+            inscripcion.setEstadoPago(EstadoPago.PAGO_ADMIN);
+
             // 2. Si el abono cubre o supera lo que falta para completar los S/. 40 de este mes
             if (montoRestante >= espacioDisponible) {
                 montoAplicadoEnEsteCiclo = espacioDisponible;
                 montoRestante -= espacioDisponible;
 
                 inscripcion.setMontoPagado(inscripcion.getMontoTotal());
+                inscripcion.setMontoReportado(inscripcion.getMontoTotal());
                 inscripcion.setActivo(true);
                 inscripcion.setFechaPago(LocalDate.now());
                 inscripcionMensualRepository.save(inscripcion);
@@ -130,6 +135,8 @@ public class InscripcionMensualService {
                 // 3. Si el abono es un pago parcial que no llega a cubrir el total del mes
                 montoAplicadoEnEsteCiclo = montoRestante;
                 inscripcion.setMontoPagado(inscripcion.getMontoPagado() + montoRestante);
+                inscripcion.setMontoReportado(inscripcion.getMontoPagado());
+                inscripcion.setFechaPago(LocalDate.now());
                 inscripcionMensualRepository.save(inscripcion);
                 montoRestante = 0; // Se consumió todo el dinero abonado
             }
@@ -255,5 +262,97 @@ public class InscripcionMensualService {
 
         inscripcion.setEstadoPago(EstadoPago.RECHAZADO);
         inscripcionMensualRepository.save(inscripcion);
+    }
+
+    @Transactional
+    public void pagarConBono(Long usuarioId, double montoAPagar) {
+        if (montoAPagar <= 0) {
+            throw new RuntimeException("El monto a pagar debe ser mayor a 0");
+        }
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // 1. Validar que el usuario tenga saldo suficiente en sus bonos acumulados
+        double saldoDisponible = pagoBonoService.obtenerSaldoDisponible(usuario);
+        if (montoAPagar > saldoDisponible) {
+            throw new RuntimeException(String.format("Saldo insuficiente. Tu saldo actual en bonos es de S/. %.2f", saldoDisponible));
+        }
+
+        double montoRestante = montoAPagar;
+        YearMonth mesTarget = YearMonth.now();
+
+        while (montoRestante > 0) {
+            String periodoStr = mesTarget.toString();
+
+            // Buscar o crear la inscripción del periodo objetivo
+            InscripcionMensual inscripcion = inscripcionMensualRepository.findByUsuarioAndPeriodoMes(usuario, periodoStr)
+                    .orElseGet(() -> {
+                        InscripcionMensual nueva = new InscripcionMensual();
+                        nueva.setUsuario(usuario);
+                        nueva.setPeriodoMes(periodoStr);
+                        nueva.setMontoTotal(40.0);
+                        nueva.setMontoPagado(0.0);
+                        nueva.setActivo(false);
+                        return inscripcionMensualRepository.save(nueva);
+                    });
+
+            if (inscripcion.getId() == null) {
+                inscripcion = inscripcionMensualRepository.save(inscripcion);
+            }
+
+            // Si la inscripción de este periodo ya está pagada por completo (S/. 40), pasamos al siguiente mes
+            double espacioDisponible = inscripcion.getMontoTotal() - inscripcion.getMontoPagado();
+            if (inscripcion.isActivo() || espacioDisponible <= 0) {
+                mesTarget = mesTarget.plusMonths(1);
+                continue;
+            }
+
+            double montoAplicadoEnEsteCiclo;
+
+            // Establecemos el estado como PAGO_BONO
+            inscripcion.setEstadoPago(EstadoPago.PAGO_BONO);
+
+            // 3. Evaluar si el abono completa o excede el monto del mes actual
+            if (montoRestante >= espacioDisponible) {
+                montoAplicadoEnEsteCiclo = espacioDisponible;
+                montoRestante -= espacioDisponible;
+
+                inscripcion.setMontoPagado(inscripcion.getMontoTotal());
+                inscripcion.setMontoReportado(inscripcion.getMontoTotal());
+                inscripcion.setActivo(true);
+                inscripcion.setFechaPago(LocalDate.now());
+
+                // Activar al usuario en el sistema si se completa la inscripción del mes en curso
+                if (periodoStr.equals(YearMonth.now().toString())) {
+                    usuario.setActivoMes(true);
+                    usuarioRepository.save(usuario);
+                    propagarPuntosAscendentes(usuario);
+                }
+
+                InscripcionMensual inscripcionGuardada = inscripcionMensualRepository.save(inscripcion);
+
+                // Restar saldo de bonos y procesar la red de patrocinio
+                pagoBonoService.registrarUsoDeBono(usuario, montoAplicadoEnEsteCiclo, inscripcionGuardada);
+                pagoBonoService.procesarBonosPatrocinio(usuario, montoAplicadoEnEsteCiclo, inscripcionGuardada);
+
+                // Avanzar al siguiente mes para los saldos restantes
+                mesTarget = mesTarget.plusMonths(1);
+            } else {
+                // 4. Pago parcial dentro del mes objetivo
+                montoAplicadoEnEsteCiclo = montoRestante;
+                inscripcion.setMontoPagado(inscripcion.getMontoPagado() + montoRestante);
+                inscripcion.setMontoReportado(inscripcion.getMontoPagado());
+                inscripcion.setFechaPago(LocalDate.now());
+
+                InscripcionMensual inscripcionGuardada = inscripcionMensualRepository.save(inscripcion);
+
+                // Restar saldo de bonos y procesar la red de patrocinio
+                pagoBonoService.registrarUsoDeBono(usuario, montoAplicadoEnEsteCiclo, inscripcionGuardada);
+                pagoBonoService.procesarBonosPatrocinio(usuario, montoAplicadoEnEsteCiclo, inscripcionGuardada);
+
+                montoRestante = 0;
+            }
+        }
     }
 }

@@ -86,7 +86,10 @@
                         </thead>
                         <tbody id="tbodyBonos">
                         <tr th:each="bono : ${bonos}">
-                            <td class="text-center fw-semibold text-success" th:text="${'S/. ' + bono.monto}"></td>
+                            <td class="text-center fw-semibold"
+                                th:classappend="${bono.monto < 0 ? 'text-danger' : 'text-success'}"
+                                th:text="${'S/. ' + bono.monto}">
+                            </td>
                             <td class="text-center"><span class="fw-semibold text-dark" th:text="${bono.tipoBono}"></span></td>
                             <td class="text-center" th:text="${bono.fechaPago}"></td>
                         </tr>
