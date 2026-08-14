@@ -47,6 +47,7 @@
                             </div>
                         </div>
 
+                        <!-- Nombre y Apellido Alineados -->
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="nombre" class="form-label fw-semibold text-navy small">Nombre</label>
@@ -65,25 +66,29 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-semibold text-navy small">Correo Electrónico</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-gray-light border-end-0 px-3"><i class="bi bi-envelope text-navy"></i></span>
-                                <input type="email" id="email" th:field="*{email}" class="form-control border-start-0 shadow-none py-2" placeholder="nombre@ejemplo.com" required />
+                        <!-- Correo Electrónico y Contraseña Alineados -->
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="email" class="form-label fw-semibold text-navy small">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-gray-light border-end-0 px-3"><i class="bi bi-envelope text-navy"></i></span>
+                                    <input type="email" id="email" th:field="*{email}" class="form-control border-start-0 shadow-none py-2" placeholder="nombre@ejemplo.com" required />
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="password" class="form-label fw-semibold text-navy small">Contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-gray-light border-end-0 px-3"><i class="bi bi-key text-navy"></i></span>
+                                    <input type="password" id="password" th:field="*{password}" class="form-control border-start-0 border-end-0 shadow-none py-2" placeholder="••••••••" required />
+                                    <button class="btn btn-outline-secondary bg-gray-light border-start-0 text-navy px-3" type="button" id="togglePassword">
+                                        <i class="bi bi-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-semibold text-navy small">Contraseña</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-gray-light border-end-0 px-3"><i class="bi bi-key text-navy"></i></span>
-                                <input type="password" id="password" th:field="*{password}" class="form-control border-start-0 border-end-0 shadow-none py-2" placeholder="••••••••" required />
-                                <button class="btn btn-outline-secondary bg-gray-light border-start-0 text-navy px-3" type="button" id="togglePassword">
-                                    <i class="bi bi-eye" id="toggleIcon"></i>
-                                </button>
-                            </div>
-                        </div>
-
+                        <!-- DNI y Teléfono Alineados -->
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="dni" class="form-label fw-semibold text-navy small">DNI</label>
@@ -97,7 +102,6 @@
                                 <label for="telefono" class="form-label fw-semibold text-navy small">Teléfono</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-gray-light border-end-0 px-3"><i class="bi bi-telephone text-navy"></i></span>
-                                    <!-- Validación agregada: exactamente 9 dígitos numéricos -->
                                     <input type="text"
                                            id="telefono"
                                            th:field="*{telefono}"
@@ -110,40 +114,47 @@
                             </div>
                         </div>
 
+                        <!-- Departamento, Provincia y Distrito Alineados -->
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label for="departamentoSelect" class="form-label">Departamento</label>
-                                <select class="form-select" id="departamentoSelect" name="departamento" required>
+                                <label for="departamentoSelect" class="form-label fw-semibold text-navy small">Departamento</label>
+                                <select class="form-select border-start-0 shadow-none py-2" id="departamentoSelect" name="departamento" required>
                                     <option value="">Seleccione Departamento</option>
                                 </select>
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label for="provinciaSelect" class="form-label">Provincia</label>
-                                <select class="form-select" id="provinciaSelect" name="provincia" required disabled>
+                                <label for="provinciaSelect" class="form-label fw-semibold text-navy small">Provincia</label>
+                                <select class="form-select border-start-0 shadow-none py-2" id="provinciaSelect" name="provincia" required disabled>
                                     <option value="">Seleccione Provincia</option>
                                 </select>
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label for="distritoSelect" class="form-label">Distrito</label>
-                                <select class="form-select" id="distritoSelect" name="distrito" required disabled>
+                                <label for="distritoSelect" class="form-label fw-semibold text-navy small">Distrito</label>
+                                <select class="form-select border-start-0 shadow-none py-2" id="distritoSelect" name="distrito" required disabled>
                                     <option value="">Seleccione Distrito</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="direccion" class="form-label">Dirección Exacta</label>
-                            <input type="text" class="form-control" id="direccion" name="direccion"
-                                   th:value="${usuario.direccion}" placeholder="Av. Los Incas 123, Dpto 402" required>
-                        </div>
+                        <!-- Dirección Exacta y Fecha de Nacimiento Alineados -->
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="direccion" class="form-label fw-semibold text-navy small">Dirección Exacta</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-gray-light border-end-0 px-3"><i class="bi bi-geo-alt text-navy"></i></span>
+                                    <input type="text" class="form-control border-start-0 shadow-none py-2" id="direccion" name="direccion"
+                                           th:value="${usuario.direccion}" placeholder="Av. Los Incas 123, Dpto 402" required>
+                                </div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="fechaNacimiento" class="form-label fw-semibold text-navy small">Fecha de Nacimiento</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-gray-light border-end-0 px-3"><i class="bi bi-calendar-date text-navy"></i></span>
-                                <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" class="form-control border-start-0 shadow-none py-2" />
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="fechaNacimiento" class="form-label fw-semibold text-navy small">Fecha de Nacimiento</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-gray-light border-end-0 px-3"><i class="bi bi-calendar-date text-navy"></i></span>
+                                    <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" class="form-control border-start-0 shadow-none py-2" />
+                                </div>
                             </div>
                         </div>
 

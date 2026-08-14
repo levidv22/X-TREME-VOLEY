@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Notificaciones</title>
     <link rel="icon" type="image/png" th:href="@{/img/logo.png}">
+    <!-- Bootstrap 5 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/perfil-dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/noti-list.css}">
 </head>
 <body class="bg-light">
 
@@ -16,89 +18,123 @@
 <div class="main-content">
     <div th:replace="fragments/header :: header"></div>
 
-    <div class="container-fluid p-3 p-md-4">
+    <div class="container-fluid px-3 px-md-4 py-4">
 
         <!-- Cabecera Responsiva -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
             <div>
-                <h2 class="fw-bold text-navy mb-1"><i class="bi bi-bell-fill me-2 text-warning"></i>Centro de Notificaciones</h2>
-                <p class="text-muted small mb-0">Gestiona y revisa todas tus alertas y avisos del sistema</p>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-bell-fill fs-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold text-navy mb-0">Centro de Notificaciones</h3>
+                        <p class="text-muted small mb-0">Gestiona y revisa todas tus alertas y avisos del sistema</p>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex gap-2 flex-wrap">
+
+            <div class="w-100 w-sm-auto text-end">
                 <form th:action="@{/notificaciones/marcar-todas-leidas}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-outline-primary rounded-pill px-3 shadow-sm text-nowrap">
-                        <i class="bi bi-check2-all me-1"></i> Marcar todas como leídas
+                    <button type="submit"
+                            id="btnMarcarTodas"
+                            class="btn btn-white btn-outline-secondary border-light-subtle rounded-pill px-3 py-2 shadow-sm text-nowrap w-100 w-sm-auto"
+                            th:disabled="${#lists.isEmpty(notificaciones)}">
+                        <i class="bi bi-check2-all me-1 text-primary"></i> Marcar todas como leídas
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- Alertas -->
-        <div th:if="${exito}" class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${exito}"></span>
+        <!-- Alertas del Servidor -->
+        <div th:if="${exito}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+                <span th:text="${exito}"></span>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
-        <!-- Contenedor Principal de Notificaciones -->
-        <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold text-secondary mb-0"><i class="bi bi-envelope-open me-2"></i>Bandeja de Entrada</h5>
-                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2"
+        <!-- Contenedor Principal -->
+        <div class="main-card p-3 p-md-4">
+
+            <!-- Encabezado de la Tarjeta -->
+            <div class="d-flex justify-content-between align-items-center pb-3 mb-3 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-inbox text-muted fs-5"></i>
+                    <h5 class="fw-bold text-navy mb-0">Bandeja de Entrada</h5>
+                </div>
+                <span id="contadorNotificaciones" class="badge bg-primary-subtle text-primary fw-semibold rounded-pill px-3 py-2"
                       th:text="${#lists.size(notificaciones) + ' Notificaciones'}">0 Notificaciones</span>
             </div>
 
             <!-- Listado de Notificaciones -->
-            <div class="list-group list-group-flush border-top">
+            <div class="d-flex flex-column gap-1" id="contenedorNotificaciones">
 
                 <!-- Estado Vacío -->
-                <div th:if="${#lists.isEmpty(notificaciones)}" class="text-center text-muted py-5">
-                    <i class="bi bi-bell-slash text-secondary opacity-50 display-4 d-block mb-3"></i>
-                    <p class="mb-0 fw-semibold">No tienes notificaciones pendientes.</p>
-                    <small class="text-muted">Te avisaremos cuando haya novedades en tu cuenta.</small>
+                <div id="estadoVacio" th:if="${#lists.isEmpty(notificaciones)}" class="text-center py-5 my-3">
+                    <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
+                        <i class="bi bi-bell-slash text-secondary opacity-50 display-5"></i>
+                    </div>
+                    <h6 class="fw-bold text-navy mb-1">¡Todo al día! No tienes notificaciones.</h6>
+                    <p class="text-muted small mb-0">Te avisaremos cuando se generen nuevos eventos o alertas en tu cuenta.</p>
                 </div>
 
                 <!-- Item de Notificación -->
                 <div th:each="notif : ${notificaciones}"
-                     class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 py-3 px-2 border-bottom transition-all"
-                     th:classappend="${!notif.leido ? 'bg-primary-subtle bg-opacity-10' : ''}">
+                     th:id="'item-notif-' + ${notif.id}"
+                     class="item-notificacion d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 p-3"
+                     th:classappend="${!notif.leido ? 'notif-no-leida' : ''}">
 
-                    <!-- Icono según el estado / Detalle -->
+                    <!-- Icono y Contenido -->
                     <div class="d-flex align-items-start gap-3 flex-grow-1">
-                        <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0 mt-1"
-                             th:classappend="${!notif.leido ? 'bg-primary text-white' : 'bg-light text-secondary'}">
-                            <i class="bi" th:classappend="${!notif.leido ? 'bi-bell-fill' : 'bi-bell'}"></i>
+                        <!-- Icono SVG/Font Dinámico -->
+                        <div class="icon-shape"
+                             th:classappend="${!notif.leido ? 'bg-primary text-white shadow-sm' : 'bg-light text-secondary'}">
+                            <i class="bi" th:classappend="${!notif.leido ? 'bi-bell-fill' : 'bi-check2'}"></i>
                         </div>
+
+                        <!-- Detalles -->
                         <div class="flex-grow-1">
                             <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                <span th:if="${!notif.leido}" class="unread-dot" title="No leída"></span>
                                 <h6 class="fw-bold text-navy mb-0" th:text="${notif.titulo}">Título de la notificación</h6>
-                                <span th:if="${!notif.leido}" class="badge bg-primary text-white rounded-pill px-2 py-1 small">
+                                <span th:if="${!notif.leido}" class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill small ms-1" style="font-size: 0.7rem;">
                                     Nuevo
                                 </span>
                             </div>
-                            <p class="text-muted small mb-1" th:text="${notif.mensaje}">Mensaje detallado de la notificación...</p>
-                            <div class="text-secondary opacity-75 small d-flex align-items-center gap-1">
+
+                            <p class="text-secondary small mb-2 text-break" th:text="${notif.mensaje}">Mensaje detallado de la notificación...</p>
+
+                            <div class="text-muted opacity-75 small d-flex align-items-center gap-1" style="font-size: 0.78rem;">
                                 <i class="bi bi-clock me-1"></i>
                                 <span th:text="${#temporals.format(notif.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Acciones -->
-                    <div class="d-flex align-items-center gap-2 align-self-end align-self-md-center text-nowrap">
+                    <!-- Botones de Acción -->
+                    <div class="notif-actions d-flex align-items-center gap-2 flex-shrink-0">
                         <a th:href="@{'/notificaciones/ir/' + ${notif.id}}"
-                           class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm">
-                            <i class="bi bi-box-arrow-up-right me-1"></i> Ver
+                           class="btn btn-sm btn-light border text-navy rounded-pill px-3 py-1 shadow-sm d-inline-flex align-items-center gap-1 fw-semibold">
+                            <span>Ver</span>
+                            <i class="bi bi-arrow-right-short fs-6"></i>
                         </a>
-                        <form th:action="@{/notificaciones/eliminar}" method="post" class="d-inline">
+
+                        <!-- Formulario Eliminar con AJAX -->
+                        <form th:action="@{/notificaciones/eliminar}" method="post" class="d-inline form-eliminar-notif">
                             <input type="hidden" name="id" th:value="${notif.id}"/>
-                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2 shadow-sm"
-                                    title="Eliminar notificación"
-                                    onclick="return confirm('¿Estás seguro de eliminar esta notificación?');">
-                                <i class="bi bi-trash"></i>
+                            <button type="button"
+                                    class="btn btn-action btn-outline-danger border-0 btn-eliminar-notif"
+                                    title="Eliminar notificación">
+                                <i class="bi bi-trash3"></i>
                             </button>
                         </form>
                     </div>
@@ -110,6 +146,21 @@
     </div>
 </div>
 
+<!-- Toast Flotante Personalizado -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div id="toastEliminado" class="toast align-items-center text-white bg-dark border-0 rounded-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                <span id="toastMensaje" class="small">Notificación eliminada correctamente</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/noti-list.js}"></script>
 </body>
 </html>

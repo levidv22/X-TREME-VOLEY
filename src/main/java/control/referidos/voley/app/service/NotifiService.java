@@ -39,4 +39,12 @@ public class NotifiService {
             notificacionRepository.save(n);
         });
     }
+
+    public void marcarTodasComoLeidas() {
+        notificacionRepository.marcarTodasComoLeidas();
+    }
+
+    public void eliminarNotificacion(Long id) {
+        notificacionRepository.deleteById(id);
+    }
 }
