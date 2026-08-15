@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red de Afiliados</title>
+    <title>Red de Afiliados - Árbol Genealógico</title>
     <link rel="icon" type="image/png" th:href="@{/img/logo.png}">
+
+    <!-- Google Fonts & Bootstrap 5.3 -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Estilos personalizados -->
     <link rel="stylesheet" th:href="@{/css/perfil-dashboard.css}">
-    <link rel="stylesheet" th:href="@{/css/afiliados.css}">
+    <link rel="stylesheet" th:href="@{/css/afiliados2.css}">
 </head>
-<body class="bg-light">
+<body class="bg-body-tertiary">
 
 <div th:replace="fragments/sidebar :: sidebar"></div>
 
@@ -22,12 +27,19 @@
         <!-- Cabecera Responsiva -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
             <div>
-                <h2 class="fw-bold text-navy mb-1"><i class="bi bi-diagram-3-fill me-2 text-primary"></i>Red de Afiliados</h2>
-                <p class="text-muted small mb-0">Visualiza tu árbol genealógico de referidos nivel por nivel en tiempo real.</p>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="header-icon-box bg-primary bg-opacity-10 text-primary rounded-3 p-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-diagram-3-fill fs-4"></i>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold text-dark mb-0 fs-3">Red de Afiliados</h2>
+                        <p class="text-muted small mb-0">Visualiza la estructura jerárquica de tu red en tiempo real.</p>
+                    </div>
+                </div>
             </div>
             <div>
-                <a th:href="@{/usuarios/perfil}" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Volver al Perfil
+                <a th:href="@{/usuarios/perfil}" class="btn btn-dark rounded-pill px-3 py-2 fw-semibold small d-flex align-items-center gap-2 shadow-sm hover-lift">
+                    <i class="bi bi-arrow-left"></i> Volver al Perfil
                 </a>
             </div>
         </div>
@@ -35,31 +47,44 @@
         <!-- Tarjeta Principal del Árbol -->
         <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-white tree-container">
 
+            <!-- Estado Vacío -->
             <div th:if="${#lists.isEmpty(arbolRed.hijos)}" class="text-center py-5">
-                <div class="mb-3 text-muted opacity-50">
-                    <i class="bi bi-person-plus display-4"></i>
+                <div class="empty-icon-wrapper mb-3 mx-auto bg-light text-muted rounded-circle d-flex align-items-center justify-content-center" style="width: 72px; height: 72px;">
+                    <i class="bi bi-diagram-2 display-6 text-secondary opacity-50"></i>
                 </div>
-                <h6 class="text-muted fw-semibold">Aún no cuentas con afiliados registrados en tu red directa.</h6>
-                <p class="text-muted small mb-0">Comparte tu enlace de invitación para comenzar a expandir tu equipo.</p>
+                <h5 class="text-dark fw-bold mb-1">Aún no cuentas con afiliados registrados</h5>
+                <p class="text-muted small mb-0 mx-auto" style="max-width: 420px;">
+                    Comparte tu código o enlace directo de invitación para empezar a estructurar tu red.
+                </p>
             </div>
 
             <div th:if="${!#lists.isEmpty(arbolRed.hijos)}">
 
                 <!-- NODO RAÍZ (Usuario Logueado) -->
-                <div class="d-flex align-items-center p-3 mb-3 bg-light rounded-3 border border-primary-subtle shadow-sm flex-wrap gap-2">
-                    <img th:src="${arbolRed.fotoUrl}" class="avatar-img me-2 me-md-3 shadow-sm flex-shrink-0" alt="Avatar">
-                    <div class="flex-grow-1 overflow-hidden">
-                        <h5 class="mb-0 fw-bold text-dark text-truncate" th:text="${arbolRed.nombreCompleto}"></h5>
-                        <small class="text-muted text-truncate d-block"><i class="bi bi-envelope me-1"></i><span th:text="${arbolRed.email}"></span> | <i class="bi bi-shield-check me-1"></i>Tú</small>
+                <div class="root-node-card d-flex align-items-center p-3 mb-4 rounded-4 border shadow-sm flex-wrap gap-3">
+                    <div class="position-relative">
+                        <img th:src="${arbolRed.fotoUrl != null and !#strings.isEmpty(arbolRed.fotoUrl) ? arbolRed.fotoUrl : '/img/default-avatar.png'}"
+                             class="avatar-img-root shadow-sm object-fit-cover rounded-circle border border-2 border-primary" alt="Avatar">
+                        <span class="position-absolute bottom-0 end-0 bg-success border border-white border-2 rounded-circle p-1" title="Activo"></span>
                     </div>
-                    <div>
-                        <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">Nivel Base</span>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            <h5 class="mb-0 fw-bold text-dark text-truncate" th:text="${arbolRed.nombreCompleto}">Nombre Usuario</h5>
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10 rounded-pill px-2.5 py-1 small fw-bold">
+                                Nivel Base / Raíz
+                            </span>
+                        </div>
+                        <div class="small text-muted d-flex align-items-center gap-2 flex-wrap">
+                            <span><i class="bi bi-envelope me-1 text-primary"></i><span th:text="${arbolRed.email}">usuario@email.com</span></span>
+                            <span class="opacity-50">|</span>
+                            <span class="fw-semibold text-dark"><i class="bi bi-shield-check text-success me-1"></i>Tú (Líder de Red)</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- CONTENEDOR DE RAMAS (RECURSIVO) CON SOPORTE RESPONSIVO -->
+                <!-- CONTENEDOR DE RAMAS CON DESPLAZAMIENTO HORIZONTAL RESPONSIVO -->
                 <div class="tree-scroll-wrapper">
-                    <div class="ms-1 ms-md-3">
+                    <div class="ms-1 ms-md-2">
                         <div th:replace="~{red/afiliados :: fragmento-nodo(hijos=${arbolRed.hijos}, sessionUser=${session.usuarioLogueado})}"></div>
                     </div>
                 </div>
@@ -73,38 +98,50 @@
 <!-- FRAGMENTO RECURSIVO PARA RENDERIZAR EL ÁRBOL NIVEL POR NIVEL -->
 <div th:fragment="fragmento-nodo(hijos, sessionUser)">
     <div th:each="hijo, iterStat : ${hijos}" class="tree-branch">
-        <div class="node-card p-3 mb-2">
+        <div class="node-card p-3 mb-2 rounded-3">
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
 
                 <div class="d-flex align-items-center flex-grow-1 overflow-hidden">
+
                     <!-- Botón Desplegable si tiene sub-hijos -->
-                    <div th:if="${!#lists.isEmpty(hijo.hijos)}" class="toggle-btn me-2 text-primary fw-bold fs-5 flex-shrink-0" onclick="toggleSubTree(this)" role="button">
-                        <i class="bi bi-chevron-down"></i>
-                    </div>
-                    <div th:if="${#lists.isEmpty(hijo.hijos)}" class="me-2 me-md-3 text-muted opacity-25 flex-shrink-0">
-                        <i class="bi bi-dot fs-4"></i>
+                    <div th:if="${!#lists.isEmpty(hijo.hijos)}"
+                         class="toggle-btn me-2.5 text-primary bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                         onclick="toggleSubTree(this)"
+                         role="button"
+                         title="Expandir/Contraer">
+                        <i class="bi bi-chevron-down icon-toggle fs-6"></i>
                     </div>
 
-                    <img th:src="${hijo.fotoUrl}" class="avatar-img me-2 me-md-3 shadow-sm flex-shrink-0" alt="Foto">
+                    <div th:if="${#lists.isEmpty(hijo.hijos)}" class="me-2 me-md-3 text-muted opacity-25 flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 28px;">
+                        <i class="bi bi-dash-circle fs-6"></i>
+                    </div>
+
+                    <img th:src="${hijo.fotoUrl != null and !#strings.isEmpty(hijo.fotoUrl) ? hijo.fotoUrl : '/img/default-avatar.png'}"
+                         class="avatar-img me-2 me-md-3 shadow-xs object-fit-cover flex-shrink-0" alt="Foto">
+
                     <div class="overflow-hidden flex-grow-1">
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 180px;" th:text="${hijo.nombreCompleto}"></h6>
-                            <span class="badge badge-nivel rounded-pill px-2 py-1" th:text="${'Nivel ' + hijo.nivel}"></span>
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 220px;" th:text="${hijo.nombreCompleto}">Nombre Afiliado</h6>
+                            <span class="badge badge-nivel rounded-pill px-2 py-0.5" th:text="${'Nivel ' + hijo.nivel}">Nivel 1</span>
                         </div>
-                        <div class="small text-muted mt-1 text-truncate">
-                            <span><i class="bi bi-award me-1"></i>Rango: <strong class="text-navy" th:text="${hijo.rangoActual}"></strong></span>
 
+                        <div class="d-flex align-items-center gap-3 flex-wrap small text-muted">
+                            <span class="d-flex align-items-center">
+                                <i class="bi bi-award-fill me-1 text-warning"></i>Rango:
+                                <strong class="text-dark ms-1" th:text="${hijo.rangoActual != null ? hijo.rangoActual : 'NINGUNO'}">NINGUNO</strong>
+                            </span>
+                            <span class="d-flex align-items-center">
+                                <i class="bi bi-star-fill me-1 text-success"></i>Puntos:
+                                <strong class="text-success ms-1" th:text="${hijo.puntosTotales + ' pts'}">0 pts</strong>
+                            </span>
                         </div>
-                        <div class="small text-muted mt-1 text-truncate">
-                        <span><i class="bi bi-star-fill me-1 text-success"></i>Puntos: <strong class="text-success" th:text="${hijo.puntosTotales + ' pts'}">0 pts</strong></span>
-                        </div>
-                        </div>
+                    </div>
                 </div>
 
                 <!-- Acciones / Botón exclusivo para ADMIN -->
                 <div class="d-flex align-items-center gap-2 ms-auto">
                     <th:block th:if="${sessionUser != null and sessionUser.rol.name() == 'ADMIN'}">
-                        <button class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm text-nowrap"
+                        <button class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-xs text-nowrap fw-semibold border-opacity-50"
                                 type="button"
                                 data-bs-toggle="collapse"
                                 th:data-bs-target="${'#detallesAdmin_' + hijo.nivel + '_' + iterStat.index}"
@@ -120,10 +157,10 @@
             <!-- Bloque Oculto (Colapsable) con los datos privados para el ADMIN -->
             <th:block th:if="${sessionUser != null and sessionUser.rol.name() == 'ADMIN'}">
                 <div class="collapse mt-3 pt-2 border-top" th:id="${'detallesAdmin_' + hijo.nivel + '_' + iterStat.index}">
-                    <div class="bg-light p-2 rounded-3 small text-secondary d-flex flex-wrap gap-2 gap-md-3 align-items-center">
-                        <div><i class="bi bi-envelope me-1 text-primary"></i>Email: <strong class="text-break" th:text="${hijo.email}"></strong></div>
-                        <div><i class="bi bi-card-heading me-1 text-primary"></i>DNI: <strong th:text="${hijo.dni}"></strong></div>
-                        <div><i class="bi bi-telephone me-1 text-primary"></i>Teléfono: <strong th:text="${hijo.telefono}"></strong></div>
+                    <div class="bg-light p-2.5 rounded-3 small text-secondary d-flex flex-wrap gap-3 align-items-center">
+                        <div><i class="bi bi-envelope me-1 text-primary"></i>Email: <strong class="text-dark text-break" th:text="${hijo.email}">-</strong></div>
+                        <div><i class="bi bi-card-heading me-1 text-primary"></i>DNI: <strong class="text-dark" th:text="${hijo.dni}">-</strong></div>
+                        <div><i class="bi bi-telephone me-1 text-primary"></i>Teléfono: <strong class="text-dark" th:text="${hijo.telefono}">-</strong></div>
                     </div>
                 </div>
             </th:block>

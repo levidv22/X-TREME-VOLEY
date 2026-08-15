@@ -1,76 +1,159 @@
 :root {
-    --color-navy: #0A192F;
-    --color-navy-hover: #172A45;
-    --color-gray-light: #F8F9FA;
-    --color-gray-border: #E2E8F0;
-}
-
-html, body {
-    height: 100%;
-    margin: 0;
+    --color-navy: #0f172a;
+    --color-navy-light: #1e293b;
+    --color-accent: #3b82f6;
+    --color-bg-base: #f1f5f9;
+    --color-gray-border: #e2e8f0;
+    --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
-    background-color: var(--color-gray-light);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow-x: hidden; /* Evita scrolls horizontales indeseados en celulares */
+    background-color: var(--color-bg-base);
+    font-family: var(--font-main);
+    color: #334155;
+    background-image:
+            radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.08) 0px, transparent 50%);
+}
+
+/* Orbes dinámicos de fondo */
+.bg-blur-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+    pointer-events: none;
+}
+.orb-1 {
+    width: 300px;
+    height: 300px;
+    background: rgba(59, 130, 246, 0.25);
+    top: -50px;
+    left: -50px;
+}
+.orb-2 {
+    width: 350px;
+    height: 350px;
+    background: rgba(15, 23, 42, 0.15);
+    bottom: -80px;
+    right: -80px;
+}
+
+/* Card Principal */
+.main-card {
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+}
+
+.shadow-custom {
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
 }
 
 .bg-navy {
-    background-color: var(--color-navy) !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
 }
 
 .text-navy {
     color: var(--color-navy) !important;
 }
 
-.bg-gray-light {
-    background-color: var(--color-gray-light) !important;
+/* Input Group personalizado */
+.input-group-custom {
+    border: 1px solid var(--color-gray-border);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    background-color: #f8fafc;
+    overflow: hidden;
 }
 
-.text-gray-light {
-    color: #A0AEC0 !important;
+.input-group-custom:focus-within {
+    border-color: var(--color-accent);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
 }
 
+.input-group-custom .input-group-text,
+.input-group-custom .btn-toggle-password {
+    background: transparent;
+    border: none;
+}
+
+.input-group-custom .form-control {
+    border: none;
+    background: transparent;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.95rem;
+}
+
+/* Botones */
 .btn-navy {
-    background-color: var(--color-navy);
-    border-color: var(--color-navy);
-    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-navy:hover {
-    background-color: var(--color-navy-hover);
-    border-color: var(--color-navy-hover);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.25);
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
 }
 
-.form-control:focus {
-    border-color: var(--color-navy);
-    box-shadow: 0 0 0 0.25rem rgba(10, 25, 47, 0.15);
+.btn-navy:active {
+    transform: translateY(0);
 }
 
-.input-group-text {
-    border-color: var(--color-gray-border);
+.short-arrow {
+    transition: transform 0.2s ease;
 }
 
-.card {
-    border-radius: 1rem;
+.btn-navy:hover .short-arrow {
+    transform: translateX(4px);
 }
 
-/* Ajustes especiales para pantallas muy pequeñas (celulares compactos en vertical) */
-@media (max-width: 576px) {
-    body {
-        align-items: flex-start !important; /* Permite scroll natural si el teclado del celular abre el espacio */
-    }
-    .card {
-        border-radius: 0.75rem;
-    }
+/* Enlaces */
+.link-hover {
+    transition: color 0.2s ease;
 }
 
+.link-hover:hover {
+    color: var(--color-accent) !important;
+    text-decoration: underline !important;
+}
+
+/* Logo de Verificación */
+.verified-logo-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+}
+
+.verified-shape {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: white;
+    z-index: 1;
+}
+
+.verified-logo-img {
+    position: relative;
+    z-index: 2;
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* Animación de entrada */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(15px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -79,35 +162,5 @@ body {
 }
 
 .animate-fade-in {
-    animation: fadeIn 0.4s ease-out forwards;
-}
-
-/* Badge de Verificado con Logo */
-.verified-logo-wrapper {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100px;
-    height: 100px;
-}
-
-/* Figura del parche verificado */
-.verified-shape {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    filter: drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.2)); /* Sombra suave para darle relieve */
-}
-
-/* Imagen del logo encima del fondo blanco */
-.verified-logo-img {
-    position: relative;
-    z-index: 2;
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
+    animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

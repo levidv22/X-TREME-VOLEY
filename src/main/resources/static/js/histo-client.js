@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", function () {
         btnPagar.addEventListener("click", function (e) {
             e.preventDefault();
 
-            // Bloquear el botón temporalmente
+            // Bloquear el botón temporalmente y mostrar loader
             btnPagar.disabled = true;
-            btnPagar.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span> Procesando...`;
+            btnPagar.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Procesando...`;
 
             const formData = new FormData(formPagar);
 
@@ -18,41 +18,42 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(response => {
                     if (response.ok) {
-                        mostrarToast("Pago completo de 40 soles registrado con éxito.", true);
+                        mostrarToast("Pago registrado con éxito.", true);
 
-                        // Recargar suavemente la página después de mostrar la notificación
                         setTimeout(() => {
                             window.location.reload();
                         }, 1200);
                     } else {
                         mostrarToast("Ocurrió un error al procesar el pago.", false);
                         btnPagar.disabled = false;
-                        btnPagar.innerHTML = `<i class="bi bi-check-all me-1"></i> Pagar Completo`;
+                        btnPagar.innerHTML = `<i class="bi bi-check2-all me-1"></i> Registrar Pago Completo`;
                     }
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    mostrarToast("Error en el servidor o problema de red.", false);
+                    mostrarToast("Error de conexión con el servidor.", false);
                     btnPagar.disabled = false;
-                    btnPagar.innerHTML = `<i class="bi bi-check-all me-1"></i> Pagar Completo`;
+                    btnPagar.innerHTML = `<i class="bi bi-check2-all me-1"></i> Registrar Pago Completo`;
                 });
         });
     }
 
-    // Función para activar Toast flotante
+    // Función global para Toasts estilo SaaS
     function mostrarToast(mensaje, esExito = true) {
         const toastEl = document.getElementById('toastNotificacion');
         const toastMensaje = document.getElementById('toastMensaje');
-        const icon = toastEl.querySelector('.bi');
+        const icon = toastEl.querySelector('.toast-body .bi');
 
-        toastMensaje.innerText = mensaje;
-        if (esExito) {
-            icon.className = "bi bi-check-circle-fill text-success me-2";
-        } else {
-            icon.className = "bi bi-exclamation-triangle-fill text-danger me-2";
+        if (toastMensaje && icon) {
+            toastMensaje.innerText = mensaje;
+            if (esExito) {
+                icon.className = "bi bi-check-circle-fill text-success fs-5 me-2";
+            } else {
+                icon.className = "bi bi-exclamation-triangle-fill text-danger fs-5 me-2";
+            }
+
+            const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+            toast.show();
         }
-
-        const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
-        toast.show();
     }
 });

@@ -1,0 +1,156 @@
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-body: #f8fafc;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+}
+
+/* Tarjetas con elevación suave */
+.card-custom {
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 1rem;
+    background: #ffffff;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+.icon-shape {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+}
+
+/* Input Búsqueda Estilizado */
+.search-box {
+    position: relative;
+}
+.search-box .form-control {
+    padding-left: 2.8rem;
+    padding-right: 2.5rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    border: 1.5px solid #e2e8f0;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+.search-box .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+.search-box .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    z-index: 4;
+}
+.search-box .clear-btn {
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: none;
+    z-index: 4;
+}
+
+/* Tabla Estilizada */
+.table-custom {
+    margin-bottom: 0;
+}
+.table-custom thead th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+.table-custom tbody tr {
+    transition: background-color 0.15s ease;
+}
+.table-custom tbody tr:hover {
+    background-color: #f1f5f9;
+}
+.table-custom td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Badges e Iniciales */
+.badge-soft {
+    padding: 0.4em 0.75em;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+.badge-soft-secondary {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.avatar-initials {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+/* Botones */
+.btn-action {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 0.6rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+    border: none;
+}
+.btn-action:hover {
+    background-color: var(--primary-hover);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+/* Botón Copiar */
+.btn-copy {
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+.btn-copy:hover {
+    opacity: 1;
+}

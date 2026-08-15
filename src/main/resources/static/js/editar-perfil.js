@@ -2,12 +2,24 @@
 document.addEventListener('DOMContentLoaded', function () {
     const fileInput = document.getElementById('fileFoto');
     const previewImg = document.getElementById('previewImg');
-    const avatarContainer = document.querySelector('.avatar-container');
+    const uploadBadge = document.querySelector('.upload-badge-btn');
+    const avatarWrapper = document.querySelector('.avatar-edit-wrapper');
 
-    avatarContainer.addEventListener('click', function () {
-        fileInput.click();
-    });
+    // Permitir clic tanto en el botón de cámara como en el área del avatar
+    if (uploadBadge) {
+        uploadBadge.addEventListener('click', function (e) {
+            e.preventDefault();
+            fileInput.click();
+        });
+    }
 
+    if (avatarWrapper) {
+        avatarWrapper.addEventListener('click', function () {
+            fileInput.click();
+        });
+    }
+
+    // Previsualización inmediata al seleccionar una imagen
     fileInput.addEventListener('change', function (event) {
         const file = event.target.files[0];
         if (file) {
@@ -17,12 +29,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 previewImg.classList.add('animate-pulse');
                 setTimeout(() => {
                     previewImg.classList.remove('animate-pulse');
-                }, 500);
+                }, 600);
             };
             reader.readAsDataURL(file);
         }
     });
 
+    // Validación Bootstrap
     const forms = document.querySelectorAll('.needs-validation');
     Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {

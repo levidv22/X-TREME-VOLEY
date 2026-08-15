@@ -1,21 +1,116 @@
 /* static/css/resumen.css */
 
-.bg-navy {
-    background-color: #0A192F !important;
+/* Fuentes y Colores Base */
+body.bg-surface {
+    background-color: #f4f6f9 !important;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
-.page-link:focus {
+.text-navy {
+    color: #0A192F !important;
+}
+
+.fw-extrabold {
+    font-weight: 800;
+}
+
+/* Header Gradient & Card Decorator */
+.hero-header {
+    background: linear-gradient(135deg, #0A192F 0%, #1E3A8A 100%);
+    position: relative;
+}
+
+.bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+.bg-circle-1 {
+    width: 250px;
+    height: 250px;
+    top: -50px;
+    right: -50px;
+}
+
+.bg-circle-2 {
+    width: 150px;
+    height: 150px;
+    bottom: -30px;
+    left: 20%;
+}
+
+.hover-bounce {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-bounce:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* KPI Cards */
+.kpi-card {
+    transition: all 0.25s ease-in-out;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+.border-start-accent {
+    border-left: 4px solid !important;
+}
+
+.kpi-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos de Tabla Personalizados */
+.custom-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.custom-table thead th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 12px 16px;
+}
+
+.table-row-hover {
+    transition: background-color 0.2s ease;
+}
+
+.table-row-hover:hover {
+    background-color: #f1f5f9 !important;
+}
+
+/* Inputs de búsqueda */
+.search-box .form-control:focus {
     box-shadow: none;
+    background-color: #e2e8f0 !important;
 }
 
-/* Ajustes responsivos para tablas y paginación en móviles */
-@media (max-width: 576px) {
-    .table th, .table td {
-        font-size: 0.85rem;
-        padding: 0.5rem;
-    }
+/* Paginación */
+.pagination .page-link {
+    border: none;
+    padding: 0.4rem 0.85rem;
+    color: #475569;
+}
 
-    .card {
-        border-radius: 1rem !important;
-    }
+.pagination .page-item.active .page-link {
+    background-color: #0A192F;
+    color: #fff;
 }

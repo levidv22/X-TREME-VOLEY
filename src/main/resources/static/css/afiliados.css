@@ -1,32 +1,111 @@
 /* static/css/afiliados.css */
 
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1e293b;
+}
+
+/* Efecto de elevación en botones e interactividad */
+.hover-lift {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.08) !important;
+}
+
+.btn-white {
+    background-color: #ffffff;
+    border-color: #e2e8f0;
+}
+
+.btn-white:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Tarjeta de Referido Mejorada */
+.hover-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+.hover-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Avatar de Perfil */
+.avatar-container {
+    width: 84px;
+    height: 84px;
+}
+
+.avatar-profile {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.status-indicator {
+    width: 14px;
+    height: 14px;
+    bottom: 2px;
+    right: 2px;
+}
+
+/* Estado vacío */
+.empty-state-card {
+    border: 1px dashed #cbd5e1 !important;
+}
+
+.empty-icon-wrapper {
+    width: 80px;
+    height: 80px;
+}
+
+/* Buscador */
+.search-box input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+    border-color: #93c5fd !important;
+}
+
+/* Sombras suaves personalizadas */
+.shadow-xs {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* --- ESTILOS DEL ÁRBOL SUCESOR --- */
 .tree-container {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     color: #2c3e50;
     width: 100%;
 }
 
-/* Contenedor con scroll horizontal para pantallas móviles estrechas */
 .tree-scroll-wrapper {
     width: 100%;
     overflow-x: auto;
     padding-bottom: 1rem;
 }
 
-/* Estructura de árbol con líneas conectoras profesionales */
 .node-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     transition: all 0.25s ease-in-out;
     position: relative;
-    min-width: 280px; /* Asegura que la tarjeta no se comprima demasiado */
+    min-width: 280px;
 }
 
 .node-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     border-color: #cbd5e1;
 }
 
@@ -57,7 +136,7 @@
 }
 
 .tree-branch:last-child::after {
-    height: 24px; /* Corta la línea vertical en el último elemento hijo */
+    height: 24px;
 }
 
 .avatar-img {
@@ -85,14 +164,13 @@
 }
 
 .sub-tree {
-    display: none; /* Oculto por defecto, se despliega al hacer clic */
+    display: none;
 }
 
 .sub-tree.show {
     display: block;
 }
 
-/* Ajustes responsivos adicionales para tablets y PCs */
 @media (min-width: 768px) {
     .tree-branch {
         padding-left: 35px;

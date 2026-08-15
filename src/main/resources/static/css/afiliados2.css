@@ -1,0 +1,140 @@
+/* static/css/afiliados.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1e293b;
+}
+
+/* Elevación sutil para botones interactivos */
+.hover-lift {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.08) !important;
+}
+
+.shadow-xs {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Nodo Raíz Principal */
+.root-node-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+}
+
+.avatar-img-root {
+    width: 56px;
+    height: 56px;
+}
+
+/* Árbol y ramas de la red */
+.tree-container {
+    width: 100%;
+}
+
+.tree-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.node-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    min-width: 290px;
+}
+
+.node-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+}
+
+.tree-branch {
+    position: relative;
+    padding-left: 20px;
+    margin-top: 8px;
+}
+
+.tree-branch::before {
+    content: "";
+    position: absolute;
+    top: 24px;
+    left: 0;
+    width: 16px;
+    height: 2px;
+    background-color: #cbd5e1;
+}
+
+.tree-branch::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background-color: #cbd5e1;
+}
+
+.tree-branch:last-child::after {
+    height: 24px;
+}
+
+.avatar-img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #e2e8f0;
+}
+
+.badge-nivel {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+}
+
+/* Botón de despliegue */
+.toggle-btn {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.toggle-btn:hover {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.toggle-btn .icon-toggle {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-btn.collapsed .icon-toggle {
+    transform: rotate(-90deg);
+}
+
+.sub-tree {
+    display: none;
+}
+
+.sub-tree.show {
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .tree-branch {
+        padding-left: 32px;
+    }
+    .tree-branch::before {
+        width: 24px;
+    }
+}

@@ -1,0 +1,102 @@
+/* static/css/login.css */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    --color-navy: #0A192F;
+    --color-navy-light: #1e3a8a;
+    --color-navy-hover: #172A45;
+    --color-primary: #2563eb;
+    --color-gray-bg: #f8fafc;
+    --color-border: #e2e8f0;
+}
+
+body.bg-slate {
+    background-color: var(--color-gray-bg);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1e293b;
+}
+
+/* Header con Gradiente y Textura Mesh */
+.bg-gradient-navy {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+}
+
+.header-overlay {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    background-size: 16px 16px;
+    opacity: 0.4;
+}
+
+/* Icono central de marca en la cabecera */
+.brand-icon-box {
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.text-navy {
+    color: var(--color-navy) !important;
+}
+
+/* Botón principal */
+.btn-navy {
+    background-color: var(--color-navy);
+    border-color: var(--color-navy);
+    transition: all 0.25s ease;
+}
+
+.btn-navy:hover {
+    background-color: var(--color-navy-hover);
+    border-color: var(--color-navy-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px rgba(10, 25, 47, 0.4) !important;
+}
+
+/* Form Controls & Selects */
+.form-control, .form-select {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.925rem;
+    border-color: var(--color-border);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.input-group-text {
+    border-color: var(--color-border);
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* Animaciones y Efectos */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.35s ease-out forwards;
+}
+
+/* Ajuste Responsivo */
+@media (max-width: 576px) {
+    .card-header {
+        padding: 2rem 1.25rem !important;
+    }
+    .card-body {
+        padding: 1.25rem !important;
+    }
+}

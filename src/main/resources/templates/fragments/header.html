@@ -5,37 +5,43 @@
     <title>Header</title>
 </head>
 <body>
-<header th:fragment="header" class="navbar navbar-expand navbar-light bg-white px-2 px-sm-3 px-md-4 py-2 shadow-sm custom-header w-100">
+<header th:fragment="header" class="navbar navbar-expand bg-white px-3 px-md-4 py-2 custom-header w-100 sticky-top">
     <div class="container-fluid px-0 d-flex align-items-center justify-content-between">
 
         <!-- Lado Izquierdo: Hamburguesa + Logo + Rango -->
-        <div class="d-flex align-items-center gap-1 gap-sm-2 gap-md-3">
-            <button class="btn btn-light d-lg-none border-0 p-0 me-1 me-sm-2 shadow-none text-navy d-flex align-items-center justify-content-center" type="button" id="sidebarToggle" aria-label="Abrir Menú">
-                <i class="bi bi-list fs-2"></i>
+        <div class="d-flex align-items-center gap-2 gap-md-3">
+            <!-- Botón Hamburguesa Móvil -->
+            <button class="btn btn-icon d-lg-none border-0 text-navy p-2 d-flex align-items-center justify-content-center" type="button" id="sidebarToggle" aria-label="Abrir Menú">
+                <i class="bi bi-list fs-3"></i>
             </button>
 
-            <a class="navbar-brand d-flex align-items-center me-1 me-md-3 p-0 text-decoration-none" th:href="@{/usuarios/perfil}">
-                <img th:src="@{/img/logo.png}" alt="Logo X-TREME" class="header-logo object-fit-contain transition-transform hover-scale" />
+            <!-- Logo con Animación -->
+            <a class="navbar-brand d-flex align-items-center me-1 me-md-2 p-0 text-decoration-none logo-wrapper" th:href="@{/usuarios/perfil}">
+                <img th:src="@{/img/logo.png}" alt="Logo X-TREME" class="header-logo object-fit-contain" />
             </a>
 
-            <div class="vr d-none d-md-block my-auto text-secondary opacity-25" style="height: 24px;"></div>
+            <!-- Separador Vertical -->
+            <div class="vr d-none d-md-block my-auto text-secondary opacity-25" style="height: 28px;"></div>
 
-            <div class="d-flex align-items-center gap-1 ms-sm-1">
-                <span class="text-muted small fw-semibold text-uppercase tracking-wider d-none d-md-inline">Rango:</span>
-                <span class="badge bg-navy px-2 px-sm-3 py-1 py-sm-2 rounded-pill fw-bold header-badge" th:text="${session.usuarioLogueado.rangoActual}">RANGO</span>
+            <!-- Insignia / Rango -->
+            <div class="d-flex align-items-center gap-2 ms-sm-1">
+                <span class="text-uppercase text-muted small fw-bold tracking-wider d-none d-md-inline" style="font-size: 0.75rem;">Rango:</span>
+                <div class="badge-rank-wrapper">
+                    <span class="badge badge-glow px-3 py-2 rounded-pill fw-bold text-uppercase" th:text="${session.usuarioLogueado.rangoActual}">RANGO</span>
+                </div>
             </div>
         </div>
 
-        <!-- Lado Derecho: Campanita (Solo Admin) + Menú de Usuario -->
-        <div class="d-flex align-items-center gap-0 gap-sm-1">
+        <!-- Lado Derecho: Campanita + Menú de Usuario -->
+        <div class="d-flex align-items-center gap-2 gap-sm-3">
 
-            <!-- Campanita de Notificaciones -->
-            <div class="position-relative me-0 me-sm-1" th:if="${session.usuarioLogueado != null && session.usuarioLogueado.rol.name() == 'ADMIN'}">
-                <a th:href="@{/notificaciones}" class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center shadow-none border-0 position-relative header-btn-bell">
+            <!-- Campanita de Notificaciones (Solo Admin) -->
+            <div class="position-relative" th:if="${session.usuarioLogueado != null && session.usuarioLogueado.rol.name() == 'ADMIN'}">
+                <a th:href="@{/notificaciones}" class="btn-notification-bell position-relative d-flex align-items-center justify-content-center" aria-label="Notificaciones">
                     <i class="bi bi-bell-fill fs-5 text-navy"></i>
+                    <!-- Badge Flotante Animado -->
                     <span th:if="${conteoNotificacionesNoLeidas > 0}"
-                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                          style="font-size: 0.65rem;"
+                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white notification-badge-pulse"
                           th:text="${conteoNotificacionesNoLeidas}">
                         0
                     </span>
@@ -44,33 +50,57 @@
 
             <!-- Menú Dropdown del Usuario -->
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-1 gap-sm-2 border-0 bg-transparent shadow-none p-1" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="text-end d-none d-sm-block">
-                        <span class="d-block fw-bold text-navy text-truncate" style="max-width: 150px;" th:text="${session.usuarioLogueado.nombre + ' ' + session.usuarioLogueado.apellido}">Nombre Apellido</span>
-                        <span class="d-block text-muted small text-truncate" style="max-width: 150px;" th:text="${session.usuarioLogueado.email}">correo@ejemplo.com</span>
-                    </div>
-                    <img th:src="${session.usuarioLogueado.fotoUrl != null && !session.usuarioLogueado.fotoUrl.isEmpty() ? session.usuarioLogueado.fotoUrl : '/img/default.jpg'}"
-                         alt="Avatar"
-                         class="rounded-circle border flex-shrink-0" width="38" height="38" style="object-fit: cover;" />
-                </button>
-                <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-3 rounded-4 mt-2" aria-labelledby="userMenuDropdown" style="min-width: 260px; max-width: 90vw;">
-                    <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
+                <button class="btn user-dropdown-btn d-flex align-items-center gap-2 p-1 pe-2 rounded-pill transition-all" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="avatar-status-wrapper">
                         <img th:src="${session.usuarioLogueado.fotoUrl != null && !session.usuarioLogueado.fotoUrl.isEmpty() ? session.usuarioLogueado.fotoUrl : '/img/default.jpg'}"
                              alt="Avatar"
-                             class="rounded-circle" width="48" height="48" style="object-fit: cover;" />
+                             class="rounded-circle header-avatar shadow-sm" width="40" height="40" />
+                        <span class="status-indicator"></span>
+                    </div>
+                    <div class="text-start d-none d-sm-block lh-sm">
+                        <span class="d-block fw-bold text-navy text-truncate style-name" style="max-width: 140px;" th:text="${session.usuarioLogueado.nombre + ' ' + session.usuarioLogueado.apellido}">Nombre Apellido</span>
+                        <span class="d-block text-muted text-truncate style-email" style="max-width: 140px;" th:text="${session.usuarioLogueado.email}">correo@ejemplo.com</span>
+                    </div>
+                    <i class="bi bi-chevron-down fs-7 text-muted ms-1 d-none d-sm-inline dropdown-arrow"></i>
+                </button>
+
+                <!-- Menú Desplegable Mejorado -->
+                <div class="dropdown-menu dropdown-menu-end shadow-premium border-0 p-3 rounded-4 mt-2 animate-dropdown" aria-labelledby="userMenuDropdown" style="min-width: 280px; max-width: 90vw;">
+                    <!-- Cabecera de Menú -->
+                    <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom border-light-subtle">
+                        <div class="position-relative">
+                            <img th:src="${session.usuarioLogueado.fotoUrl != null && !session.usuarioLogueado.fotoUrl.isEmpty() ? session.usuarioLogueado.fotoUrl : '/img/default.jpg'}"
+                                 alt="Avatar"
+                                 class="rounded-circle shadow-sm" width="52" height="52" style="object-fit: cover;" />
+                        </div>
                         <div class="overflow-hidden">
                             <h6 class="mb-0 fw-bold text-navy text-truncate" th:text="${session.usuarioLogueado.nombre + ' ' + session.usuarioLogueado.apellido}"></h6>
-                            <small class="text-muted" th:text="${session.usuarioLogueado.rol}"></small>
+                            <span class="badge bg-light text-navy border border-navy-subtle fw-semibold mt-1" th:text="${session.usuarioLogueado.rol}">ROL</span>
                         </div>
                     </div>
-                    <div class="mb-2">
-                        <p class="mb-1 small text-muted text-truncate"><i class="bi bi-envelope me-2 text-navy"></i><strong class="text-dark">Correo:</strong> <span th:text="${session.usuarioLogueado.email}"></span></p>
-                        <p class="mb-1 small text-muted"><i class="bi bi-telephone me-2 text-navy"></i><strong class="text-dark">Teléfono:</strong> <span th:text="${session.usuarioLogueado.telefono != null && !session.usuarioLogueado.telefono.isEmpty() ? session.usuarioLogueado.telefono : 'No registrado'}"></span></p>
-                        <p class="mb-0 small text-muted"><i class="bi bi-card-heading me-2 text-navy"></i><strong class="text-dark">DNI:</strong> <span th:text="${session.usuarioLogueado.dni}"></span></p>
+
+                    <!-- Datos del Usuario -->
+                    <div class="user-info-list mb-3 d-flex flex-column gap-2">
+                        <div class="info-item d-flex align-items-center gap-2 text-muted small">
+                            <div class="icon-box"><i class="bi bi-envelope text-navy"></i></div>
+                            <span class="text-truncate" th:text="${session.usuarioLogueado.email}"></span>
+                        </div>
+                        <div class="info-item d-flex align-items-center gap-2 text-muted small">
+                            <div class="icon-box"><i class="bi bi-telephone text-navy"></i></div>
+                            <span th:text="${session.usuarioLogueado.telefono != null && !session.usuarioLogueado.telefono.isEmpty() ? session.usuarioLogueado.telefono : 'No registrado'}"></span>
+                        </div>
+                        <div class="info-item d-flex align-items-center gap-2 text-muted small">
+                            <div class="icon-box"><i class="bi bi-card-heading text-navy"></i></div>
+                            <span>DNI: <strong class="text-dark" th:text="${session.usuarioLogueado.dni}"></strong></span>
+                        </div>
                     </div>
-                    <div class="dropdown-divider my-3"></div>
-                    <a class="dropdown-item text-danger d-flex align-items-center gap-2 rounded-2 py-2 px-2 fw-semibold" th:href="@{/usuarios/logout}">
-                        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+
+                    <div class="dropdown-divider my-2"></div>
+
+                    <!-- Botón de Cerrar Sesión -->
+                    <a class="dropdown-item dropdown-logout-btn d-flex align-items-center gap-2 rounded-3 py-2 px-3 fw-semibold text-danger transition-all" th:href="@{/usuarios/logout}">
+                        <i class="bi bi-box-arrow-left fs-5"></i>
+                        <span>Cerrar Sesión</span>
                     </a>
                 </div>
             </div>

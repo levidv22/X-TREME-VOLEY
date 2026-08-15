@@ -210,3 +210,301 @@ body {
         font-size: 0.7rem;
     }
 }
+
+
+
+
+
+
+
+/* ========================================= */
+/* HEADER STYLES REFINADOS & PREMIUM          */
+/* ========================================= */
+
+.custom-header {
+    background: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
+    transition: all 0.3s ease;
+}
+
+/* Logo Hover Effect */
+.logo-wrapper .header-logo {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.logo-wrapper:hover .header-logo {
+    transform: scale(1.05);
+}
+
+/* Insignia / Rango Glow */
+.badge-glow {
+    background: linear-gradient(135deg, #0A192F 0%, #172A45 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(10, 25, 47, 0.25);
+    letter-spacing: 0.5px;
+    font-size: 0.72rem;
+}
+
+/* Botón Campanita */
+.btn-notification-bell {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #F8F9FA;
+    border: 1px solid #E2E8F0;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+.btn-notification-bell:hover {
+    background-color: #0A192F;
+    border-color: #0A192F;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(10, 25, 47, 0.15);
+}
+.btn-notification-bell:hover i {
+    color: #ffffff !important;
+}
+
+/* Indicador Pulsante en Notificaciones */
+.notification-badge-pulse {
+    font-size: 0.65rem;
+    padding: 0.25em 0.5em;
+    animation: pulse-red 2s infinite;
+}
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(220, 53, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+/* Botón Dropdown de Usuario */
+.user-dropdown-btn {
+    border: 1px solid transparent;
+    transition: all 0.25s ease;
+    background-color: transparent;
+}
+.user-dropdown-btn:hover,
+.user-dropdown-btn[aria-expanded="true"] {
+    background-color: #F8F9FA;
+    border-color: #E2E8F0;
+}
+.user-dropdown-btn:hover .dropdown-arrow,
+.user-dropdown-btn[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+}
+.dropdown-arrow {
+    transition: transform 0.25s ease;
+}
+
+.style-name {
+    font-size: 0.875rem;
+}
+.style-email {
+    font-size: 0.75rem;
+}
+
+/* Avatar con indicador de Estado */
+.avatar-status-wrapper {
+    position: relative;
+    display: inline-block;
+}
+.header-avatar {
+    object-fit: cover;
+    border: 2px solid #ffffff;
+}
+.status-indicator {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: #10B981;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+}
+
+/* Menú Desplegable Dropdown */
+.shadow-premium {
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05) !important;
+}
+
+.animate-dropdown {
+    animation: dropdownFadeIn 0.25s ease-out forwards;
+}
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Íconos e Info de Menú */
+.icon-box {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background-color: #F1F5F9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Botón Logout */
+.dropdown-logout-btn {
+    transition: all 0.2s ease;
+}
+.dropdown-logout-btn:hover {
+    background-color: rgba(220, 53, 69, 0.08);
+    color: #dc3545 !important;
+    transform: translateX(3px);
+}
+
+
+
+
+
+
+/* ========================================= */
+/* ESTILOS SIDEBAR PREMIUM                   */
+/* ========================================= */
+
+.custom-sidebar {
+    background: linear-gradient(180deg, #0A192F 0%, #061020 100%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+}
+
+.border-navy-light {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Avatar y Perfil Header */
+.sidebar-avatar-wrapper {
+    width: 90px;
+    height: 90px;
+}
+
+.sidebar-avatar {
+    border: 3px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.avatar-overlay {
+    backdrop-filter: blur(2px);
+    transition: all 0.3s ease;
+}
+
+.sidebar-avatar-wrapper:hover .sidebar-avatar {
+    transform: scale(1.04);
+    border-color: #38BDF8 !important;
+}
+
+.sidebar-status-online {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 14px;
+    height: 14px;
+    background-color: #10B981;
+    border: 2px solid #0A192F;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.badge-role-pill {
+    background: rgba(255, 255, 255, 0.08);
+    color: #94A3B8;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+}
+
+/* Navegación y Links */
+.nav-icon-wrapper {
+    width: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.sidebar-link, .sidebar-dropdown-toggle {
+    color: #94A3B8 !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative;
+}
+
+.sidebar-link:hover, .sidebar-dropdown-toggle:hover {
+    color: #FFFFFF !important;
+    background-color: rgba(255, 255, 255, 0.06);
+    transform: translateX(4px);
+}
+
+.sidebar-link:hover .nav-icon-wrapper {
+    transform: scale(1.15);
+    color: #38BDF8;
+}
+
+/* Estado Activo (Active Link) */
+.sidebar-link.active-link,
+.sidebar-dropdown-toggle.active-link {
+    color: #FFFFFF !important;
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.15) 0%, rgba(56, 189, 248, 0.02) 100%) !important;
+    border-left: 3.5px solid #38BDF8;
+    border-top-left-radius: 2px !important;
+    border-bottom-left-radius: 2px !important;
+    font-weight: 600;
+}
+
+.sidebar-link.active-link .nav-icon-wrapper,
+.sidebar-dropdown-toggle.active-link .nav-icon-wrapper {
+    color: #38BDF8;
+}
+
+/* Transición de Flecha en Desplegable */
+.chevron-icon {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-dropdown-toggle[aria-expanded="true"] .chevron-icon {
+    transform: rotate(180deg);
+    color: #38BDF8;
+}
+
+/* Submenú */
+.submenu-wrapper {
+    transition: all 0.3s ease-in-out;
+}
+
+.submenu-wrapper .sidebar-link {
+    font-size: 0.85rem;
+}
+
+/* Botón de Salir (Logout) */
+.logout-link {
+    color: #F87171 !important;
+    transition: all 0.25s ease;
+}
+
+.logout-link:hover {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: #EF4444 !important;
+    transform: translateX(4px);
+}
+
+/* Botón Cierre Móvil */
+.btn-close-sidebar {
+    background: rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease;
+}
+.btn-close-sidebar:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
